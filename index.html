@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>香港動物拯救機構資料庫 | ADB HK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+  /* ── Brand Tokens ── */
+  :root {
+    --coral:        #FF7A6B;
+    --coral-hover:  #E96355;
+    --coral-light:  #FFE5E1;
+    --sage:         #8FAF9B;
+    --sage-deep:    #6E8F7C;
+    --sage-light:   #E6F1EC;
+    --white:        #FFFFFF;
+    --bg-section:   #F7F8F7;
+    --text-primary: #2F2F2F;
+    --text-sec:     #6B7280;
+    --text-muted:   #9CA3AF;
+    --border:       #E5E7EB;
+    --shadow:       rgba(0,0,0,0.05);
+    --radius-sm:    8px;
+    --radius-md:    12px;
+    --radius-lg:    16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg-section);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--coral);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text-sec);
+    font-weight: 400;
+  }
+
+  nav {
+    display: flex;
+    gap: 6px;
+  }
+
+  nav a {
+    font-size: 13px;
+    color: var(--text-sec);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+  }
+
+  nav a:hover { background: var(--bg-section); color: var(--text-primary); }
+  nav a.active { background: var(--coral-light); color: var(--coral-hover); font-weight: 500; }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+  }
+
+  .hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--coral-light);
+    color: var(--coral-hover);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .hero h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: var(--text-sec);
+    margin-bottom: 2rem;
+    line-height: 1.7;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .stat-chip {
+    background: var(--bg-section);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 18px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--coral);
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-sec);
+    margin-top: 2px;
+  }
+
+  /* ── Main Layout ── */
+  .main {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
+
+  /* ── Search & Filters ── */
+  .controls {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .search-wrap {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px 0 40px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-section);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .search-input:focus {
+    border-color: var(--coral);
+    background: var(--white);
+  }
+
+  .search-input::placeholder { color: var(--text-muted); }
+
+  .filter-group {
+    margin-bottom: 0.75rem;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+
+  .pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    background: var(--white);
+    color: var(--text-sec);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .pill:hover {
+    border-color: var(--sage);
+    color: var(--sage-deep);
+    background: var(--sage-light);
+  }
+
+  .pill.active {
+    background: var(--coral);
+    border-color: var(--coral);
+    color: var(--white);
+  }
+
+  /* ── Results header ── */
+  .results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .results-count {
+    font-size: 13px;
+    color: var(--text-sec);
+  }
+
+  .results-count strong { color: var(--text-primary); }
+
+  /* ── Org Cards ── */
+  .org-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .org-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+
+  .org-card:hover {
+    border-color: var(--sage);
+    box-shadow: 0 4px 16px rgba(143,175,155,0.15);
+  }
+
+  .org-card.expanded {
+    border-color: var(--coral);
+  }
+
+  .card-header {
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .org-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--coral-light);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .org-info { flex: 1; min-width: 0; }
+
+  .org-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .org-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+
+  .verified-badge {
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--sage-light);
+    color: var(--sage-deep);
+    padding: 2px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .pending-badge {
+    font-size: 10px;
+    font-weight: 500;
+    background: #FEF9C3;
+    color: #854D0E;
+    padding: 2px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+
+  .org-en {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .tag-row {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 10px;
+  }
+
+  .tag-district { background: #EEF2FF; color: #4338CA; }
+  .tag-type     { background: var(--coral-light); color: var(--coral-hover); }
+  .tag-animal   { background: var(--sage-light); color: var(--sage-deep); }
+
+  .chevron {
+    color: var(--text-muted);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+
+  .org-card.expanded .chevron { transform: rotate(180deg); }
+
+  /* ── Card Details ── */
+  .card-details {
+    display: none;
+    border-top: 1px solid var(--border);
+    background: var(--bg-section);
+    padding: 1.25rem 1.5rem;
+    gap: 1.25rem;
+  }
+
+  .org-card.expanded .card-details { display: grid; }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px 12px;
+    font-size: 13px;
+  }
+
+  .dl { color: var(--text-muted); font-size: 12px; padding-top: 1px; }
+
+  .dv { color: var(--text-primary); word-break: break-word; }
+
+  .dv a {
+    color: var(--coral-hover);
+    text-decoration: none;
+  }
+
+  .dv a:hover { text-decoration: underline; }
+
+  .org-desc {
+    font-size: 13px;
+    color: var(--text-sec);
+    line-height: 1.8;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    margin-top: 0.25rem;
+  }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-sec);
+  }
+
+  .empty-icon { font-size: 48px; margin-bottom: 1rem; }
+  .empty h3 { font-size: 16px; font-weight: 500; margin-bottom: 0.5rem; }
+  .empty p { font-size: 13px; color: var(--text-muted); }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 4rem;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+    padding: 2rem;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  footer a { color: var(--coral); text-decoration: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    header { padding: 0 1rem; }
+    nav { display: none; }
+    .hero { padding: 2rem 1rem 1.5rem; }
+    .hero h1 { font-size: 24px; }
+    .main { padding: 0 1rem; margin: 1.5rem auto; }
+    .card-details { display: none; }
+    .org-card.expanded .card-details { display: flex; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a class="logo" href="#">
+    <div class="logo-icon">🐾</div>
+    <div>
+      <div class="logo-text">ADB HK</div>
+      <div class="logo-sub">動物拯救資料庫</div>
+    </div>
+  </a>
+  <nav>
+    <a href="#" class="active">機構資料庫</a>
+    <a href="#">緊急求助</a>
+    <a href="#">關於我們</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">🐾 香港動物拯救資源</div>
+    <h1>動物拯救機構資料庫</h1>
+    <p>搜尋香港各區動物救援、領養及義工資訊，為毛孩找到最合適的幫助</p>
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="stat-num" id="totalCount">12</div>
+        <div class="stat-label">登記機構</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-num">18</div>
+        <div class="stat-label">服務地區</div>
+      </div>
+      <div class="stat-chip">
+        <div class="stat-num">6</div>
+        <div class="stat-label">動物種類</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input
+        class="search-input"
+        id="searchInput"
+        type="text"
+        placeholder="搜尋機構名稱、地區或服務…"
+        oninput="filterOrgs()"
+      />
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">服務類型</div>
+      <div class="pills" id="typeFilters">
+        <button class="pill active" data-v="all" onclick="setFilter(this,'type')">全部</button>
+        <button class="pill" data-v="動物拯救" onclick="setFilter(this,'type')">動物拯救</button>
+        <button class="pill" data-v="收容所" onclick="setFilter(this,'type')">收容所</button>
+        <button class="pill" data-v="領養服務" onclick="setFilter(this,'type')">領養服務</button>
+        <button class="pill" data-v="醫療救助" onclick="setFilter(this,'type')">醫療救助</button>
+        <button class="pill" data-v="TNR絕育" onclick="setFilter(this,'type')">TNR 絕育</button>
+      </div>
+    </div>
+
+    <div class="filter-group" style="margin-bottom:0">
+      <div class="filter-label">動物種類</div>
+      <div class="pills" id="animalFilters">
+        <button class="pill active" data-v="all" onclick="setFilter(this,'animal')">所有動物</button>
+        <button class="pill" data-v="狗" onclick="setFilter(this,'animal')">🐕 狗</button>
+        <button class="pill" data-v="貓" onclick="setFilter(this,'animal')">🐱 貓</button>
+        <button class="pill" data-v="兔兔" onclick="setFilter(this,'animal')">🐰 兔兔</button>
+        <button class="pill" data-v="野生動物" onclick="setFilter(this,'animal')">🦜 野生動物</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results bar -->
+  <div class="results-bar">
+    <div class="results-count" id="resultsCount">顯示 <strong>12</strong> 個機構</div>
+  </div>
+
+  <!-- Org list -->
+  <div class="org-list" id="orgList"></div>
+
+  <!-- Empty -->
+  <div class="empty" id="emptyState" style="display:none">
+    <div class="empty-icon">🔍</div>
+    <h3>找不到符合條件的機構</h3>
+    <p>試試更換搜尋詞或篩選條件</p>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer>
+  <p>© 2026 ADB HK · 香港動物拯救機構資料庫</p>
+  <p style="margin-top:4px">資料如有錯誤或更新，歡迎 <a href="mailto:info@adbhk.org">聯絡我們</a></p>
+</footer>
+
+<script>
+const orgs = [
+  { name:'愛護動物協會', en:'Society for the Prevention of Cruelty to Animals (SPCA)', types:['動物拯救','收容所','領養服務','醫療救助'], animals:['狗','貓','兔兔','野生動物'], district:'全港', phone:'2711 1000', email:'spca@spca.org.hk', website:'https://www.spca.org.hk', hours:'週一至日 09:00–18:00', verified:true, icon:'🐾', desc:'香港最具規模的動物福利機構，提供動物拯救、醫療、收容及領養服務，設有多個分支機構遍佈全港。亦設有義工計劃及教育推廣活動。' },
+  { name:'香港流浪動物協會', en:'Hong Kong Stray Animals Society', types:['動物拯救','TNR絕育','領養服務'], animals:['狗','貓'], district:'新界', phone:'9123 4567', email:'info@hksas.org.hk', website:'https://www.hksas.org.hk', hours:'週二至日 10:00–17:00', verified:true, icon:'🐕', desc:'專注於新界區流浪狗貓的拯救及 TNR 絕育工作，與政府部門緊密合作，致力減少流浪動物數目。長期需要義工協助餵飼及捕捉工作。' },
+  { name:'香港貓義工', en:'Hong Kong Cat Volunteers', types:['TNR絕育','領養服務'], animals:['貓'], district:'全港', phone:'6234 5678', email:'hkcatvolunteers@gmail.com', website:null, hours:'不定期活動，詳見社交媒體', verified:false, icon:'🐱', desc:'由義工組成的民間貓隻關愛組織，主要推動社區貓 TNR 計劃，透過登記、絕育及放回原地，穩定社區貓數量。設有寄養網絡協助貓隻等待領養。' },
+  { name:'香港狗友協會', en:'Hong Kong Dog Rescue', types:['動物拯救','領養服務','收容所'], animals:['狗'], district:'九龍', phone:'2382 5900', email:'info@hongkongdogrescue.com', website:'https://www.hongkongdogrescue.com', hours:'週一至五 09:00–17:00', verified:true, icon:'🦮', desc:'專門拯救被遺棄、受虐待或傷病的狗隻，提供醫療護理及行為訓練後安排領養。特別關注年老及特殊需要犬隻，設有長期寄養計劃。' },
+  { name:'香港兔兔之家', en:'Hong Kong Rabbit Society', types:['動物拯救','領養服務','收容所'], animals:['兔兔'], district:'港島', phone:'9876 5432', email:'hkrabbitsociety@gmail.com', website:null, hours:'週六日 11:00–16:00（預約制）', verified:false, icon:'🐰', desc:'香港首個專注兔兔福利的機構，接收被棄置的兔兔，提供適當照顧及尋找新主人。設有兔隻護理教育工作坊，推廣正確飼養知識。' },
+  { name:'香港野生動物救護中心', en:'Hong Kong Wildlife Rescue Centre', types:['動物拯救','醫療救助'], animals:['野生動物'], district:'新界', phone:'2483 7200', email:'rescue@hkwildlife.org.hk', website:'https://www.hkwildlife.org.hk', hours:'每日 08:00–20:00（緊急求助24小時）', verified:true, icon:'🦜', desc:'專業野生動物救護及復康機構，處理受傷或生病的野生動物，包括雀鳥、爬行類及小型哺乳類動物。與漁護署合作推展野生動物保護教育計劃。' },
+  { name:'毛孩之家', en:'Fur Kids Hong Kong', types:['收容所','領養服務'], animals:['狗','貓'], district:'新界', phone:'5678 9012', email:'furkidshk@gmail.com', website:null, hours:'週四至一 12:00–18:00', verified:false, icon:'🏠', desc:'設於元朗的小型動物收容所，以家庭式環境飼養等待領養的貓狗。強調動物的心理健康，避免籠養，致力為每隻動物配對合適的領養家庭。' },
+  { name:'香港街貓關懷組', en:'HK Street Cat Care Group', types:['TNR絕育','動物拯救'], animals:['貓'], district:'港島', phone:'9345 6789', email:'streetcathk@gmail.com', website:null, hours:'義工輪更，請先聯絡', verified:false, icon:'🐈', desc:'專注港島東區街貓關懷工作，定期為貓隻提供食糧及醫療跟進。積極推動市民關注社區貓福利，並與物業管理公司協商改善貓隻生活環境。' },
+  { name:'善待動物醫療援助基金', en:'PAWS Medical Aid Fund', types:['醫療救助'], animals:['狗','貓','兔兔'], district:'全港', phone:'2345 6789', email:'paws@pawshk.org', website:'https://www.pawshk.org', hours:'週一至五 09:00–18:00', verified:true, icon:'⚕️', desc:'為有需要的流浪動物及低收入家庭寵物提供獸醫費用資助，與全港多間獸醫診所合作。特別關注緊急手術及長期病患動物的醫療需求。' },
+  { name:'動物地球香港', en:'Animals Asia Hong Kong', types:['動物拯救','醫療救助'], animals:['野生動物'], district:'全港', phone:'2791 2225', email:'hongkong@animalsasia.org', website:'https://www.animalsasia.org/hk', hours:'週一至五 09:00–18:00', verified:true, icon:'🌏', desc:'國際動物福利組織的香港辦事處，關注熊膽農場、狗肉貿易及其他動物虐待問題。在香港積極推廣動物福利教育及政策倡議工作。' },
+  { name:'失寵物尋回義務隊', en:'HK Lost Pets Volunteer Team', types:['動物拯救'], animals:['狗','貓','兔兔'], district:'全港', phone:'9012 3456', email:'lostpetshk@gmail.com', website:null, hours:'全天候義工支援（WhatsApp 優先）', verified:false, icon:'🔍', desc:'專門協助主人尋回走失寵物的義工組織，提供搜尋策略指導、宣傳物料製作及社交媒體推廣。設有失寵物資料庫，協助配對走失及被發現的動物。' },
+  { name:'漁農自然護理署動物管理中心', en:'AFCD Animal Management Centre', types:['收容所','動物拯救','領養服務'], animals:['狗','貓'], district:'全港', phone:'1823', email:null, website:'https://www.afcd.gov.hk', hours:'週一至日 09:00–17:00', verified:true, icon:'🏛️', desc:'政府動物管理機構，負責處理流浪及被遺棄動物。設有動物領養服務，市民可於各區動物管理中心辦理領養手續。如發現受傷流浪動物可致電1823報告。' }
+];
+
+let activeType = 'all', activeAnimal = 'all';
+
+function setFilter(btn, kind) {
+  const id = kind === 'type' ? 'typeFilters' : 'animalFilters';
+  document.getElementById(id).querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  if (kind === 'type') activeType = btn.dataset.v;
+  else activeAnimal = btn.dataset.v;
+  filterOrgs();
+}
+
+function filterOrgs() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const list = orgs.filter(o => {
+    const mType   = activeType   === 'all' || o.types.includes(activeType);
+    const mAnimal = activeAnimal === 'all' || o.animals.includes(activeAnimal);
+    const mSearch = !q || [o.name, o.en, o.district, o.desc].some(s => s && s.toLowerCase().includes(q));
+    return mType && mAnimal && mSearch;
+  });
+  renderOrgs(list);
+}
+
+function toggle(id) {
+  document.getElementById('org-' + id).classList.toggle('expanded');
+}
+
+function renderOrgs(list) {
+  const el = document.getElementById('orgList');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('resultsCount');
+
+  if (!list.length) {
+    el.innerHTML = '';
+    empty.style.display = 'block';
+    count.innerHTML = '找不到符合條件的機構';
+    return;
+  }
+
+  empty.style.display = 'none';
+  count.innerHTML = '顯示 <strong>' + list.length + '</strong> 個機構';
+
+  el.innerHTML = list.map((o, i) => {
+    const badge = o.verified
+      ? '<span class="verified-badge">✓ 已核實</span>'
+      : '<span class="pending-badge">待核實</span>';
+
+    const typeTags   = o.types.map(t => `<span class="tag tag-type">${t}</span>`).join('');
+    const animalTags = o.animals.map(a => `<span class="tag tag-animal">${a}</span>`).join('');
+    const distTag    = `<span class="tag tag-district">${o.district}</span>`;
+
+    const emailRow   = o.email   ? `<div class="dl">電郵</div><div class="dv"><a href="mailto:${o.email}">${o.email}</a></div>` : '';
+    const websiteRow = o.website ? `<div class="dl">網站</div><div class="dv"><a href="${o.website}" target="_blank" rel="noopener">${o.website}</a></div>` : '';
+
+    return `
+    <article class="org-card" id="org-${i}" onclick="toggle(${i})">
+      <div class="card-header">
+        <div class="org-avatar">${o.icon}</div>
+        <div class="org-info">
+          <div class="org-name-row">
+            <span class="org-name">${o.name}</span>${badge}
+          </div>
+          <div class="org-en">${o.en}</div>
+          <div class="tag-row">${distTag}${typeTags}${animalTags}</div>
+        </div>
+        <span class="chevron">⌄</span>
+      </div>
+      <div class="card-details">
+        <div class="detail-grid">
+          <div class="dl">電話</div><div class="dv">${o.phone}</div>
+          <div class="dl">服務時間</div><div class="dv">${o.hours}</div>
+          ${emailRow}${websiteRow}
+        </div>
+        <div class="org-desc">${o.desc}</div>
+      </div>
+    </article>`;
+  }).join('');
+}
+
+renderOrgs(orgs);
+</script>
+</body>
+</html>
