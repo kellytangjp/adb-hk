@@ -1,0 +1,12 @@
+{
+  "name": "adb-hk-scripts",
+  "version": "1.0.0",
+  "description": "Build script: fetch Notion DB → generate index.html",
+  "main": "build.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}
