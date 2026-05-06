@@ -48,10 +48,24 @@ async function fetchAll() {
   return pages;
 }
 
+// Normalize animal names from Notion - strip emojis/extra chars, map to canonical keys
+// Handles any format: '狗', '狗狗', '狗狗 🐕', '狗 🐕' etc.
+function normalizeAnimal(raw) {
+  // Remove all emoji (Unicode ranges), zero-width joiners, variation selectors and trim
+  var clean = raw.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2000}-\u{27FF}]|\u200D|\uFE0F/gu, '').trim();
+  // Map to canonical display names used by filter buttons
+  if (clean === '\u72d7\u72d7' || clean === '\u72d7') return '\u72d7';           // 狗
+  if (clean === '\u8c93\u8c93' || clean === '\u8c93') return '\u8c93';           // 貓
+  if (clean === '\u5154\u5154' || clean === '\u5154') return '\u5154\u5154';     // 兔兔
+  if (clean.indexOf('\u91ce\u751f') >= 0)             return '\u91ce\u751f\u52d5\u7269'; // 野生動物
+  return clean; // fallback: return cleaned string as-is
+}
+
 // map Notion page to plain JS object
 function toOrg(page) {
-  const types   = prop(page, '\u670d\u52d9\u985e\u578b') || [];
-  const animals = prop(page, '\u52d5\u7269\u7a2e\u985e') || [];
+  const types      = prop(page, '\u670d\u52d9\u985e\u578b') || [];
+  const rawAnimals = prop(page, '\u52d5\u7269\u7a2e\u985e') || [];
+  const animals    = rawAnimals.map(normalizeAnimal);
 
   let icon = '\uD83D\uDC3E';
   if (animals.indexOf('\u72d7') >= 0 && animals.indexOf('\u8c93') >= 0) icon = '\uD83D\uDC3E';
@@ -64,7 +78,7 @@ function toOrg(page) {
     name:     prop(page, '\u6a5f\u69cb/\u7d44\u7e54') || '',
     en:       prop(page, '\u82f1\u6587\u540d\u7a31')  || '',
     types:    types,
-    animals:  animals,
+    animals:  animals, // already normalized
     district: prop(page, '\u5730\u5340') || '',
     phone:    prop(page, '\u96fb\u8a71') || '',
     email:    prop(page, '\u96fb\u90f5') || '',
