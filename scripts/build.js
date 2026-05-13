@@ -1,6 +1,7 @@
 /**
  * build.js
  * Fetches all pages from the Notion database and writes index.html
+ * Filters (服務類型, 動物種類) are auto-generated from the Notion database schema.
  *
  * Env vars required:
  *   NOTION_TOKEN        - your Notion integration secret
@@ -31,6 +32,21 @@ function prop(page, name) {
   }
 }
 
+// Fetch database schema to get all select/multi_select options dynamically
+async function fetchSchema() {
+  const db = await notion.databases.retrieve({ database_id: DATABASE_ID });
+  const schema = {};
+
+  Object.keys(db.properties).forEach(function(key) {
+    const p = db.properties[key];
+    if (p.type === 'multi_select' || p.type === 'select') {
+      schema[key] = p[p.type].options.map(function(o) { return o.name; });
+    }
+  });
+
+  return schema;
+}
+
 // fetch all pages (handles pagination)
 async function fetchAll() {
   const pages = [];
@@ -48,37 +64,27 @@ async function fetchAll() {
   return pages;
 }
 
-// Normalize animal names from Notion - strip emojis/extra chars, map to canonical keys
-// Handles any format: '狗', '狗狗', '狗狗 🐕', '狗 🐕' etc.
-function normalizeAnimal(raw) {
-  // Remove all emoji (Unicode ranges), zero-width joiners, variation selectors and trim
-  var clean = raw.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2000}-\u{27FF}]|\u200D|\uFE0F/gu, '').trim();
-  // Map to canonical display names used by filter buttons
-  if (clean === '\u72d7\u72d7' || clean === '\u72d7') return '\u72d7';           // 狗
-  if (clean === '\u8c93\u8c93' || clean === '\u8c93') return '\u8c93';           // 貓
-  if (clean === '\u5154\u5154' || clean === '\u5154') return '\u5154\u5154';     // 兔兔
-  if (clean.indexOf('\u91ce\u751f') >= 0)             return '\u91ce\u751f\u52d5\u7269'; // 野生動物
-  return clean; // fallback: return cleaned string as-is
-}
-
 // map Notion page to plain JS object
 function toOrg(page) {
-  const types      = prop(page, '\u670d\u52d9\u985e\u578b') || [];
-  const rawAnimals = prop(page, '\u52d5\u7269\u7a2e\u985e') || [];
-  const animals    = rawAnimals.map(normalizeAnimal);
+  const types   = prop(page, '\u670d\u52d9\u985e\u578b') || [];   // 服務類型
+  const animals = prop(page, '\u52d5\u7269\u7a2e\u985e') || [];   // 動物種類
 
+  // Pick icon based on animals
   let icon = '\uD83D\uDC3E';
-  if (animals.indexOf('\u72d7') >= 0 && animals.indexOf('\u8c93') >= 0) icon = '\uD83D\uDC3E';
-  else if (animals.indexOf('\u72d7') >= 0)      icon = '\uD83D\uDC15';
-  else if (animals.indexOf('\u8c93') >= 0)      icon = '\uD83D\uDC31';
-  else if (animals.indexOf('\u5154\u5154') >= 0) icon = '\uD83D\uDC30';
-  else if (animals.indexOf('\u91ce\u751f\u52d5\u7269') >= 0) icon = '\uD83E\uDD9C';
+  const hasAnimal = function(k) {
+    return animals.some(function(a) { return a.indexOf(k) >= 0; });
+  };
+  if (hasAnimal('\u72d7'))                                    icon = '\uD83D\uDC15'; // 狗
+  if (hasAnimal('\u8c93'))                                    icon = '\uD83D\uDC31'; // 貓
+  if (hasAnimal('\u72d7') && hasAnimal('\u8c93'))             icon = '\uD83D\uDC3E'; // both
+  if (hasAnimal('\u5154'))                                    icon = '\uD83D\uDC30'; // 兔
+  if (hasAnimal('\u91ce\u751f'))                              icon = '\uD83E\uDD9C'; // 野生
 
   return {
     name:     prop(page, '\u6a5f\u69cb/\u7d44\u7e54') || '',
     en:       prop(page, '\u82f1\u6587\u540d\u7a31')  || '',
     types:    types,
-    animals:  animals, // already normalized
+    animals:  animals,
     district: prop(page, '\u5730\u5340') || '',
     phone:    prop(page, '\u96fb\u8a71') || '',
     email:    prop(page, '\u96fb\u90f5') || '',
@@ -94,8 +100,24 @@ function toOrg(page) {
   };
 }
 
-function buildHTML(orgs, lastUpdated) {
+// Generate filter pills HTML dynamically from schema options
+function buildFilterPills(id, filterKind, allLabel, options) {
+  const lines = [];
+  lines.push('      <div class="pills" id="' + id + '">');
+  lines.push('        <button class="pill active" data-v="all" onclick="setFilter(this,\'' + filterKind + '\')">' + allLabel + '</button>');
+  options.forEach(function(opt) {
+    lines.push('        <button class="pill" data-v="' + opt + '" onclick="setFilter(this,\'' + filterKind + '\')">' + opt + '</button>');
+  });
+  lines.push('      </div>');
+  return lines.join('\n');
+}
+
+function buildHTML(orgs, lastUpdated, schema) {
   const orgsJson = JSON.stringify(orgs, null, 0);
+
+  // Get options from schema, fallback to hardcoded if not found
+  const typeOptions   = schema['\u670d\u52d9\u985e\u578b'] || ['\u52d5\u7269\u62ef\u6551','\u6536\u5bb9\u6240','\u9818\u990a\u670d\u52d9','\u91ab\u7642\u6551\u52a9','TNR\u7d55\u80b2','\u52d5\u7269\u5584\u7d42'];
+  const animalOptions = schema['\u52d5\u7269\u7a2e\u985e'] || ['\u72d7\u72d7 \uD83D\uDC15','\u8c93\u8c93 \uD83D\uDC08\u200D\u2B1B','\u5154\u5154 \uD83D\uDC07','\u91ce\u751f\u52d5\u7269 \uD83E\uDD8E'];
 
   const lines = [];
   lines.push('<!DOCTYPE html>');
@@ -108,7 +130,7 @@ function buildHTML(orgs, lastUpdated) {
   lines.push('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />');
   lines.push('<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet" />');
   lines.push('<style>');
-  lines.push(':root{--coral:#FF7A6B;--coral-hover:#E96355;--coral-light:#FFE5E1;--sage:#8FAF9B;--sage-deep:#6E8F7C;--sage-light:#E6F1EC;--white:#FFFFFF;--bg:#F7F8F7;--text:#2F2F2F;--text-sec:#6B7280;--text-muted:#9CA3AF;--border:#E5E7EB;--shadow:rgba(0,0,0,0.05);--r-sm:8px;--r-md:12px;--r-lg:16px;}');
+  lines.push(':root{--coral:#FF6B2B;--coral-hover:#E85A1D;--coral-light:#FFF1EA;--sage:#8FAF9B;--sage-deep:#6E8F7C;--sage-light:#E6F1EC;--white:#FFFFFF;--bg:#F7F8F7;--text:#2F2F2F;--text-sec:#6B7280;--text-muted:#9CA3AF;--border:#E5E7EB;--shadow:rgba(0,0,0,0.05);--r-sm:8px;--r-md:12px;--r-lg:16px;}');
   lines.push('*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}');
   lines.push('body{font-family:"Noto Sans TC",sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}');
   lines.push('header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}');
@@ -220,27 +242,17 @@ function buildHTML(orgs, lastUpdated) {
   lines.push('      <span class="search-icon">\uD83D\uDD0D</span>');
   lines.push('      <input class="search-input" id="searchInput" type="text" placeholder="\u641c\u5c0b\u6a5f\u69cb\u540d\u7a31\u3001\u5730\u5340\u6216\u670d\u52d9\u2026" oninput="filterOrgs()" />');
   lines.push('    </div>');
+  // 服務類型 filter - auto-generated from Notion schema
   lines.push('    <div class="filter-group">');
   lines.push('      <div class="filter-label">\u670d\u52d9\u985e\u578b</div>');
-  lines.push('      <div class="pills" id="typeFilters">');
-  lines.push('        <button class="pill active" data-v="all" onclick="setFilter(this,\'type\')">\u5168\u90e8</button>');
-  lines.push('        <button class="pill" data-v="\u52d5\u7269\u62ef\u6551" onclick="setFilter(this,\'type\')">\u52d5\u7269\u62ef\u6551</button>');
-  lines.push('        <button class="pill" data-v="\u6536\u5bb9\u6240" onclick="setFilter(this,\'type\')">\u6536\u5bb9\u6240</button>');
-  lines.push('        <button class="pill" data-v="\u9818\u990a\u670d\u52d9" onclick="setFilter(this,\'type\')">\u9818\u990a\u670d\u52d9</button>');
-  lines.push('        <button class="pill" data-v="\u91ab\u7642\u6551\u52a9" onclick="setFilter(this,\'type\')">\u91ab\u7642\u6551\u52a9</button>');
-  lines.push('        <button class="pill" data-v="TNR\u7d55\u80b2" onclick="setFilter(this,\'type\')">TNR \u7d55\u80b2</button>');
-  lines.push('      </div>');
+  lines.push(buildFilterPills('typeFilters', 'type', '\u5168\u90e8', typeOptions));
   lines.push('    </div>');
+  // 動物種類 filter - auto-generated from Notion schema
   lines.push('    <div class="filter-group">');
   lines.push('      <div class="filter-label">\u52d5\u7269\u7a2e\u985e</div>');
-  lines.push('      <div class="pills" id="animalFilters">');
-  lines.push('        <button class="pill active" data-v="all" onclick="setFilter(this,\'animal\')">\u6240\u6709\u52d5\u7269</button>');
-  lines.push('        <button class="pill" data-v="\u72d7" onclick="setFilter(this,\'animal\')">\uD83D\uDC15 \u72d7</button>');
-  lines.push('        <button class="pill" data-v="\u8c93" onclick="setFilter(this,\'animal\')">\uD83D\uDC31 \u8c93</button>');
-  lines.push('        <button class="pill" data-v="\u5154\u5154" onclick="setFilter(this,\'animal\')">\uD83D\uDC30 \u5154\u5154</button>');
-  lines.push('        <button class="pill" data-v="\u91ce\u751f\u52d5\u7269" onclick="setFilter(this,\'animal\')">\uD83E\uDD9C \u91ce\u751f\u52d5\u7269</button>');
-  lines.push('      </div>');
+  lines.push(buildFilterPills('animalFilters', 'animal', '\u6240\u6709\u52d5\u7269', animalOptions));
   lines.push('    </div>');
+  // 類別 filter - static (only 2 values, unlikely to change)
   lines.push('    <div class="filter-group">');
   lines.push('      <div class="filter-label">\u985e\u5225</div>');
   lines.push('      <div class="pills" id="catFilters">');
@@ -282,7 +294,12 @@ function buildHTML(orgs, lastUpdated) {
 
 // main
 (async function() {
-  console.log('Fetching Notion database...');
+  console.log('Fetching Notion database schema...');
+  const schema = await fetchSchema();
+  console.log('Schema loaded. 服務類型 options:', schema['\u670d\u52d9\u985e\u578b']);
+  console.log('Schema loaded. 動物種類 options:', schema['\u52d5\u7269\u7a2e\u985e']);
+
+  console.log('Fetching Notion database records...');
   const pages = await fetchAll();
   console.log('Found ' + pages.length + ' records');
 
@@ -295,7 +312,7 @@ function buildHTML(orgs, lastUpdated) {
     year: 'numeric', month: 'long', day: 'numeric'
   });
 
-  const html = buildHTML(orgs, lastUpdated);
+  const html = buildHTML(orgs, lastUpdated, schema);
   const outPath = path.join(__dirname, '..', 'index.html');
   fs.writeFileSync(outPath, html, 'utf8');
   console.log('Done! Written ' + orgs.length + ' orgs to index.html');
