@@ -1,5 +1,5 @@
-// scripts/build-clinic.js
-// Syncs 🏥 香港動物診所/醫院資料庫 from Notion → animal-hospital-clinic/index.html
+// scripts/veterinary-hospital-clinic-list/build.js
+// Syncs 🏥 香港動物診所/醫院資料庫 from Notion → veterinary-hospital-clinic-list/index.html
 
 const fs   = require("fs");
 const path = require("path");
@@ -965,10 +965,10 @@ async function main() {
   console.log(`Fetched ${clinics.length} clinics`);
 
   const html    = buildHTML(clinics);
-  const outDir  = path.join(__dirname, "..", "animal-hospital-clinic");
+  const outDir  = path.join(__dirname, "..", "..", "veterinary-hospital-clinic-list");
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, "index.html"), html, "utf8");
-  console.log("✅ Written to animal-hospital-clinic/index.html");
+  console.log("✅ Written to veterinary-hospital-clinic-list/index.html");
 }
 
 main().catch((err) => {
