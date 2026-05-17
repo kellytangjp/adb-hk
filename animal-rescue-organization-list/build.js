@@ -528,7 +528,7 @@ filterOrgs();
 
   const html    = buildHTML(orgs, lastUpdated, schema);
   // ← changed output path from index.html to animal-rescue-organization-list/index.html
-  const outPath = path.join(__dirname, '..', 'animal-rescue-organization-list', 'index.html');
+  const outPath = path.join(__dirname, '..', '..', 'animal-rescue-organization-list', 'index.html');
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, html, 'utf8');
   console.log('Done! Written', orgs.length, 'orgs to animal-rescue-organization-list/index.html');
