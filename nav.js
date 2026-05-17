@@ -2,8 +2,8 @@
 (function () {
   const NAV_LINKS = [
     { label: "動物拯救機構", href: "/adb-hk/animal-rescue-organization-list/" },
-	{ label: "動物醫院/診所", href: "/veterinary-hospital-clinic-list/" },
-	{ label: "獸醫資訊", href: "/vet-list" },
+	{ label: "動物醫院/診所", href: "/adb-hk/veterinary-hospital-clinic-list/" },
+	{ label: "獸醫資訊", href: "/adb-hk/vet-list" },
     { label: "緊急求助",   href: "/adb-hk/emergency/" },
     { label: "關於我們",   href: "/adb-hk/about/" },
   ];
