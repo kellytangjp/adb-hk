@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動物拯救機構資料庫 | ADB HK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --coral: #FF6B2B; --coral-hover: #E85A1D; --coral-light: #FFF1EA;
+  --sage: #8FAF9B; --sage-deep: #6E8F7C; --sage-light: #E6F1EC;
+  --white: #FFFFFF; --bg-soft: #F7F8F7;
+  --text-primary: #2F2F2F; --text-secondary: #6B7280; --text-muted: #9CA3AF;
+  --border: #E5E7EB; --shadow: rgba(0,0,0,0.05);
+  --font: 'Noto Sans TC', sans-serif;
+}
+body { font-family: var(--font); background: var(--bg-soft); color: var(--text-primary); min-height: 100vh; }
+
+/* ── NAV ── */
+nav {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 2rem; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+}
+.nav-logo {
+  font-size: 15px; font-weight: 600; color: var(--text-primary);
+  text-decoration: none; display: flex; align-items: center; gap: 8px;
+}
+.nav-logo span { color: var(--coral); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { font-size: 14px; color: var(--text-secondary); text-decoration: none; font-weight: 400; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--coral); }
+.nav-links a.active { font-weight: 500; }
+
+/* hamburger */
+.hamburger {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  width: 36px; height: 36px; background: none; border: none; cursor: pointer; padding: 4px;
+}
+.hamburger span {
+  display: block; height: 2px; background: var(--text-primary); border-radius: 2px;
+  transition: all 0.25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+  background: var(--white); z-index: 190; flex-direction: column;
+  padding: 1.5rem 2rem; gap: 0; border-top: 1px solid var(--border);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-size: 16px; color: var(--text-secondary); text-decoration: none;
+  padding: 1rem 0; border-bottom: 1px solid var(--border); font-weight: 400;
+  transition: color 0.2s;
+}
+.mobile-menu a:hover, .mobile-menu a.active { color: var(--coral); }
+.mobile-menu a.active { font-weight: 500; }
+
+@media (max-width: 680px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+}
+
+/* ── PAGE HEADER ── */
+.page-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 2.5rem 2rem 2rem; }
+.page-header-inner { max-width: 1100px; margin: 0 auto; }
+.breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--coral); }
+.breadcrumb-sep { color: var(--border); }
+.page-header h1 { font-size: 26px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; letter-spacing: -0.3px; }
+.page-header-sub { font-size: 14px; color: var(--text-secondary); font-weight: 300; margin-bottom: 1.75rem; }
+
+/* SCORECARDS */
+.scorecards { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
+.scorecard { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.5rem; min-width: 108px; text-align: center; box-shadow: 0 2px 8px var(--shadow); }
+.scorecard-num { font-size: 36px; font-weight: 600; color: var(--coral); line-height: 1; margin-bottom: 6px; }
+.scorecard-label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.update-note { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+
+/* ── MAIN LAYOUT ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 2rem; display: grid; grid-template-columns: 230px 1fr; gap: 1.5rem; align-items: start; }
+
+/* ── SIDEBAR ── */
+.sidebar { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; position: sticky; top: 76px; }
+.filter-group { border-bottom: 1px solid var(--border); }
+.filter-group:last-child { border-bottom: none; }
+.filter-group-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.1rem; cursor: pointer; user-select: none;
+  background: transparent; border: none; width: 100%; font-family: var(--font); transition: background 0.15s;
+}
+.filter-group-header:hover { background: var(--bg-soft); }
+.filter-group-title { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 6px; }
+.filter-active-badge { background: var(--coral); color: white; font-size: 10px; font-weight: 600; border-radius: 10px; padding: 1px 6px; display: none; }
+.filter-active-badge.visible { display: inline-block; }
+.filter-chevron { width: 15px; height: 15px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
+.filter-group.open .filter-chevron { transform: rotate(180deg); }
+.filter-body { display: none; padding: 0 1rem 1rem; }
+.filter-group.open .filter-body { display: block; }
+
+.toggle-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.toggle-pill {
+  padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--white); font-family: var(--font); font-size: 12px;
+  color: var(--text-secondary); cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.toggle-pill:hover { border-color: var(--coral); color: var(--coral); }
+.toggle-pill.active { background: var(--coral); border-color: var(--coral); color: white; font-weight: 500; }
+
+/* ── CONTENT ── */
+.content { min-width: 0; }
+.search-bar { display: flex; gap: 10px; margin-bottom: 1rem; }
+.search-input-wrap { flex: 1; position: relative; }
+.search-input-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+.search-input {
+  width: 100%; height: 42px; border: 1px solid var(--border); border-radius: 8px;
+  padding: 0 12px 0 38px; font-family: var(--font); font-size: 14px;
+  color: var(--text-primary); background: var(--white); outline: none; transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(--coral); }
+.search-input::placeholder { color: var(--text-muted); }
+.search-btn {
+  height: 42px; padding: 0 20px; background: var(--coral); color: white;
+  border: none; border-radius: 8px; font-family: var(--font); font-size: 14px;
+  font-weight: 500; cursor: pointer; transition: background 0.2s;
+}
+.search-btn:hover { background: var(--coral-hover); }
+
+.active-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+.filter-pill {
+  display: flex; align-items: center; gap: 5px; background: var(--coral-light);
+  color: var(--coral); border-radius: 20px; padding: 4px 10px 4px 12px;
+  font-size: 12px; font-weight: 500; border: 1px solid rgba(255,107,43,0.2);
+}
+.filter-pill button { background: none; border: none; cursor: pointer; color: var(--coral); font-size: 14px; line-height: 1; padding: 0; display: flex; align-items: center; opacity: 0.7; }
+.filter-pill button:hover { opacity: 1; }
+
+.results-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 1rem; }
+.results-meta strong { color: var(--text-primary); font-weight: 500; }
+
+/* ── ORG CARDS ── */
+.org-list { display: flex; flex-direction: column; gap: 10px; }
+.org-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+.org-card:hover { border-color: #d1d5db; }
+.org-card.expanded { border-color: var(--coral); box-shadow: 0 4px 16px var(--shadow); }
+
+.org-card-header { display: flex; align-items: center; gap: 12px; padding: 0.9rem 1.2rem; cursor: pointer; user-select: none; }
+.org-avatar { width: 40px; height: 40px; border-radius: 9px; background: var(--coral-light); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.org-avatar.green { background: var(--sage-light); }
+.org-header-info { flex: 1; min-width: 0; }
+.org-name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 5px; }
+.org-header-tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+.badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+.badge-coral { background: var(--coral-light); color: var(--coral); }
+.badge-sage { background: var(--sage-light); color: var(--sage-deep); }
+.badge-gray { background: var(--bg-soft); color: var(--text-secondary); border: 1px solid var(--border); }
+
+.card-chevron { width: 16px; height: 16px; color: var(--text-muted); transition: transform 0.25s; flex-shrink: 0; }
+.org-card.expanded .card-chevron { transform: rotate(180deg); }
+
+.org-card-body { display: none; border-top: 1px solid var(--border); }
+.org-card.expanded .org-card-body { display: block; }
+
+/* ── DETAIL TABLE ── */
+.detail-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.detail-table tr { border-bottom: 1px solid var(--border); }
+.detail-table tr:last-child { border-bottom: none; }
+.detail-table td {
+  padding: 10px 1.25rem; vertical-align: top; line-height: 1.6;
+}
+.detail-table td:first-child {
+  width: 90px; color: var(--text-muted); font-size: 12px;
+  white-space: nowrap; padding-top: 12px; font-weight: 500;
+}
+.detail-table td:last-child { color: var(--text-secondary); }
+
+/* links inside table */
+.detail-table a { color: var(--coral); text-decoration: none; }
+.detail-table a:hover { text-decoration: underline; }
+
+/* social buttons */
+.social-btns { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 2px; }
+.social-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 13px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--white); font-family: var(--font); font-size: 12px;
+  font-weight: 500; color: var(--text-secondary); text-decoration: none;
+  cursor: pointer; transition: all 0.15s;
+}
+.social-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.social-btn.fb { border-color: #bad3f5; color: #1877f2; }
+.social-btn.fb:hover { background: #e8f0fe; }
+.social-btn.ig { border-color: #f5c6da; color: #e1306c; }
+.social-btn.ig:hover { background: #fdf0f5; }
+
+/* facebook embed area */
+.fb-embed-wrap {
+  border-top: 1px solid var(--border);
+  padding: 1.25rem;
+  background: var(--bg-soft);
+}
+.fb-embed-label {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px;
+}
+.fb-embed-inner { overflow: hidden; border-radius: 8px; }
+
+/* ── EMPTY ── */
+.empty-state { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; }
+.empty-icon { font-size: 40px; margin-bottom: 1rem; }
+.empty-state h3 { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
+.empty-state p { font-size: 13px; color: var(--text-muted); }
+
+/* ── FOOTER ── */
+footer { border-top: 1px solid var(--border); background: var(--white); padding: 1.5rem 2rem; margin-top: 3rem; }
+.footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
+.footer-inner a { color: var(--coral); text-decoration: none; }
+.footer-inner a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; padding: 1rem; }
+  .sidebar { position: static; }
+  .page-header { padding: 1.5rem 1rem 1rem; }
+  .scorecard-num { font-size: 28px; }
+  .update-note { display: none; }
+  nav { padding: 0 1rem; }
+  .detail-table td:first-child { width: 72px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">🐾 <span>ADB HK</span> 動物拯救資料庫</a>
+  <ul class="nav-links">
+    <li><a href="/animal-rescue-organization" class="active">機構資料庫</a></li>
+    <li><a href="#">緊急求助</a></li>
+    <li><a href="#">關於我們</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="選單">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/animal-rescue-organization" class="active">機構資料庫</a>
+  <a href="#">緊急求助</a>
+  <a href="#">關於我們</a>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="/">首頁</a><span class="breadcrumb-sep">›</span><span>動物拯救機構資料庫</span>
+    </div>
+    <h1>動物拯救機構資料庫</h1>
+    <p class="page-header-sub">搜尋香港各區動物救援、領養及義工資訊，為毛孩找到最合適的幫助</p>
+    <div class="scorecards">
+      <div class="scorecard">
+        <div class="scorecard-num" id="total-count">0</div>
+        <div class="scorecard-label">登記機構</div>
+      </div>
+      <div class="scorecard">
+        <div class="scorecard-num" id="ngo-count">0</div>
+        <div class="scorecard-label">非牟利機構</div>
+      </div>
+      <div class="scorecard">
+        <div class="scorecard-num" id="vol-count">0</div>
+        <div class="scorecard-label">義工組織</div>
+      </div>
+      <div class="update-note">資料更新：2026年5月13日</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <aside class="sidebar">
+    <!-- 服務類型 -->
+    <div class="filter-group" id="grp-service">
+      <button class="filter-group-header" onclick="toggleGroup('grp-service')">
+        <span class="filter-group-title">服務類型<span class="filter-active-badge" id="badge-service"></span></span>
+        <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="filter-body">
+        <div class="toggle-group" id="service-toggles">
+          <button class="toggle-pill" data-val="rescue"   onclick="toggleMulti('service','rescue',this)">動物拯救</button>
+          <button class="toggle-pill" data-val="shelter"  onclick="toggleMulti('service','shelter',this)">收容所</button>
+          <button class="toggle-pill" data-val="adoption" onclick="toggleMulti('service','adoption',this)">領養服務</button>
+          <button class="toggle-pill" data-val="medical"  onclick="toggleMulti('service','medical',this)">醫療救助</button>
+          <button class="toggle-pill" data-val="tnr"      onclick="toggleMulti('service','tnr',this)">TNR 絕育</button>
+        </div>
+      </div>
+    </div>
+    <!-- 動物種類 -->
+    <div class="filter-group" id="grp-animal">
+      <button class="filter-group-header" onclick="toggleGroup('grp-animal')">
+        <span class="filter-group-title">動物種類<span class="filter-active-badge" id="badge-animal"></span></span>
+        <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="filter-body">
+        <div class="toggle-group" id="animal-toggles">
+          <button class="toggle-pill" data-val="dog"      onclick="toggleMulti('animal','dog',this)">🐕 狗</button>
+          <button class="toggle-pill" data-val="cat"      onclick="toggleMulti('animal','cat',this)">🐱 貓</button>
+          <button class="toggle-pill" data-val="rabbit"   onclick="toggleMulti('animal','rabbit',this)">🐰 兔兔</button>
+          <button class="toggle-pill" data-val="wildlife" onclick="toggleMulti('animal','wildlife',this)">🦜 野生動物</button>
+        </div>
+      </div>
+    </div>
+    <!-- 類別 -->
+    <div class="filter-group" id="grp-type">
+      <button class="filter-group-header" onclick="toggleGroup('grp-type')">
+        <span class="filter-group-title">類別<span class="filter-active-badge" id="badge-type"></span></span>
+        <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="filter-body">
+        <div class="toggle-group" id="type-toggles">
+          <button class="toggle-pill" data-val="ngo"       onclick="toggleSingle('type','ngo',this)">非牟利機構</button>
+          <button class="toggle-pill" data-val="volunteer" onclick="toggleSingle('type','volunteer',this)">獨立義工</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" type="text" id="search" placeholder="搜尋機構名稱、地區或服務…" oninput="renderCards()">
+      </div>
+      <button class="search-btn">搜尋</button>
+    </div>
+    <div class="active-filters" id="active-pills"></div>
+    <div class="results-meta" id="results-meta"></div>
+    <div class="org-list" id="org-list"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 ADB HK · 香港動物拯救機構資料庫</span>
+    <span>資料如有錯誤或更新，歡迎 <a href="mailto:info@adbhk.org">聯絡我們</a></span>
+  </div>
+</footer>
+
+<script>
+/* ── DATA ──
+   phones: array of strings (multiple → joined with "；")
+   facebook: { name, url, pageId } — pageId used for embed; null = skip embed
+   instagram: { name, url }
+*/
+const orgs = [
+  {
+    id: 1,
+    name: "香港愛護動物協會 SPCA",
+    type: "ngo", emoji: "🐾", avatarColor: "",
+    area: "全港各區",
+    desc: "香港最具規模的動物福利機構，提供動物拯救、收容、醫療及領養服務，並推廣人道對待動物的教育。",
+    services: ["rescue","shelter","adoption","medical"],
+    animals: ["dog","cat","rabbit"],
+    phones: ["2711 1000"],
+    hours: "週一至週日 09:00–18:00",
+    website: "https://www.spca.org.hk",
+    email: "spca@spca.org.hk",
+    facebook: { name:"SPCA Hong Kong", url:"https://www.facebook.com/SPCAhk", pageId:"SPCAhk" },
+    instagram: { name:"@spcahk", url:"https://www.instagram.com/spcahk" }
+  },
+  {
+    id: 2,
+    name: "香港流浪動物之家",
+    type: "ngo", emoji: "🏠", avatarColor: "green",
+    area: "新界",
+    desc: "專注流浪貓狗的收容及領養，定期舉辦領養活動，同時推行 TNR 絕育計劃減少流浪動物數量。",
+    services: ["shelter","adoption","tnr"],
+    animals: ["dog","cat"],
+    phones: ["9123 4567"],
+    hours: "週一至週六 10:00–17:00",
+    website: "https://example.com",
+    email: "info@example.com",
+    facebook: { name:"香港流浪動物之家", url:"https://www.facebook.com/example", pageId:null },
+    instagram: { name:"@hkstray", url:"https://www.instagram.com/example" }
+  },
+  {
+    id: 3,
+    name: "香港野生動物救援中心",
+    type: "ngo", emoji: "🦜", avatarColor: "",
+    area: "大嶼山",
+    desc: "專責香港本地野生動物的救援、護理及放歸，處理受傷或迷路的野生動物，包括雀鳥、爬行類及哺乳類動物。",
+    services: ["rescue","medical"],
+    animals: ["wildlife"],
+    phones: ["2345 6789"],
+    hours: "全年無休 24小時緊急熱線",
+    website: "https://example.com",
+    email: "wildlife@example.com",
+    facebook: null,
+    instagram: null
+  },
+  {
+    id: 4,
+    name: "520浪浪加油站 加油寶貝",
+    type: "volunteer", emoji: "🐕", avatarColor: "green",
+    area: "全港",
+    desc: "長期幫助倉狗和社區狗的義工組織，宗旨為「幫得一隻得一隻，救得一隻得一隻」，現照顧近50隻狗，包括多隻傷殘老病犬。積極推動領養文化。",
+    services: ["rescue","shelter","adoption"],
+    animals: ["dog"],
+    phones: ["6999 4221"],
+    hours: "救援：6999 4221；領養及暫託：6999 4223；義工：6999 4227",
+    website: "https://www.pgrs.life",
+    email: null,
+    facebook: { name:"520浪浪加油站", url:"https://www.facebook.com/example520", pageId:null },
+    instagram: { name:"@pgrs.life", url:"https://www.instagram.com/pgrs.life" }
+  },
+  {
+    id: 5,
+    name: "毛毛義工隊",
+    type: "volunteer", emoji: "🐱", avatarColor: "green",
+    area: "九龍",
+    desc: "由一群愛貓義工組成的獨立救援小隊，主力處理貓咪緊急救援個案，並協助配對有緣領養家庭。",
+    services: ["rescue","adoption"],
+    animals: ["cat"],
+    phones: ["9876 5432"],
+    hours: "不定時，請透過 Instagram 聯絡",
+    website: null,
+    email: "maomao@example.com",
+    facebook: null,
+    instagram: { name:"@maomao_volunteers", url:"https://www.instagram.com/example" }
+  },
+  {
+    id: 6,
+    name: "香港兔子協會",
+    type: "ngo", emoji: "🐰", avatarColor: "",
+    area: "港島",
+    desc: "專注兔子保護及教育，提供兔子領養、寄養及飼養諮詢服務，致力改善兔子的生存環境與待遇。",
+    services: ["adoption","medical"],
+    animals: ["rabbit"],
+    phones: ["2234 5678", "9988 7766"],
+    hours: "週二至週日 11:00–18:00",
+    website: "https://example.com",
+    email: "rabbit@example.com",
+    facebook: { name:"香港兔子協會", url:"https://www.facebook.com/examplerabbit", pageId:"examplerabbit" },
+    instagram: null
+  }
+];
+
+const serviceLabels = { rescue:"動物拯救", shelter:"收容所", adoption:"領養服務", medical:"醫療救助", tnr:"TNR 絕育" };
+const animalLabels  = { dog:"🐕 狗", cat:"🐱 貓", rabbit:"🐰 兔兔", wildlife:"🦜 野生動物" };
+const typeLabels    = { ngo:"非牟利機構", volunteer:"獨立義工" };
+
+let activeServices = new Set();
+let activeAnimals  = new Set();
+let activeType     = null;
+
+/* ── hamburger ── */
+function toggleMenu() {
+  const hb = document.getElementById("hamburger");
+  const mm = document.getElementById("mobile-menu");
+  hb.classList.toggle("open");
+  mm.classList.toggle("open");
+}
+
+/* ── filter groups ── */
+function toggleGroup(id) { document.getElementById(id).classList.toggle("open"); }
+
+function toggleMulti(dim, val, btn) {
+  const set = dim === "service" ? activeServices : activeAnimals;
+  if (set.has(val)) { set.delete(val); btn.classList.remove("active"); }
+  else              { set.add(val);    btn.classList.add("active"); }
+  updateBadge(dim, set.size);
+  renderCards(); renderPills();
+}
+
+function toggleSingle(dim, val, btn) {
+  if (activeType === val) {
+    activeType = null; btn.classList.remove("active"); updateBadge(dim, 0);
+  } else {
+    document.querySelectorAll("#type-toggles .toggle-pill").forEach(b => b.classList.remove("active"));
+    activeType = val; btn.classList.add("active"); updateBadge(dim, 1);
+  }
+  renderCards(); renderPills();
+}
+
+function updateBadge(dim, count) {
+  const b = document.getElementById("badge-" + dim);
+  if (!b) return;
+  b.textContent = count;
+  b.classList.toggle("visible", count > 0);
+}
+
+/* ── filter logic ── */
+function getFiltered() {
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  return orgs.filter(o => {
+    if (activeServices.size > 0 && !o.services.some(s => activeServices.has(s))) return false;
+    if (activeAnimals.size  > 0 && !o.animals.some(a => activeAnimals.has(a)))   return false;
+    if (activeType !== null && o.type !== activeType) return false;
+    if (q && !o.name.toLowerCase().includes(q) && !o.desc.toLowerCase().includes(q) && !o.area.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+/* ── pills ── */
+function renderPills() {
+  const c = document.getElementById("active-pills");
+  c.innerHTML = "";
+  activeServices.forEach(v => c.appendChild(makePill(serviceLabels[v], () => {
+    activeServices.delete(v);
+    document.querySelector(`#service-toggles [data-val="${v}"]`).classList.remove("active");
+    updateBadge("service", activeServices.size); renderCards(); renderPills();
+  })));
+  activeAnimals.forEach(v => c.appendChild(makePill(animalLabels[v], () => {
+    activeAnimals.delete(v);
+    document.querySelector(`#animal-toggles [data-val="${v}"]`).classList.remove("active");
+    updateBadge("animal", activeAnimals.size); renderCards(); renderPills();
+  })));
+  if (activeType) c.appendChild(makePill(typeLabels[activeType], () => {
+    document.querySelector(`#type-toggles [data-val="${activeType}"]`).classList.remove("active");
+    activeType = null; updateBadge("type", 0); renderCards(); renderPills();
+  }));
+}
+function makePill(label, onRemove) {
+  const p = document.createElement("div");
+  p.className = "filter-pill";
+  p.innerHTML = `${label} <button title="移除篩選">×</button>`;
+  p.querySelector("button").addEventListener("click", onRemove);
+  return p;
+}
+
+/* ── helpers ── */
+function phoneLinks(phones) {
+  if (!phones || phones.length === 0) return null;
+  return phones.map(p => `<a href="tel:${p.replace(/\s/g,'')}">${p}</a>`).join("；");
+}
+
+function fbIcon() {
+  return `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>`;
+}
+function igIcon() {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>`;
+}
+
+/* ── build detail table rows ── */
+function buildDetailTable(o) {
+  const rows = [];
+
+  // 機構簡介
+  rows.push(`<tr><td>機構簡介</td><td>${o.desc}</td></tr>`);
+
+  // 聯絡電話
+  const ph = phoneLinks(o.phones);
+  if (ph) rows.push(`<tr><td>聯絡電話</td><td>${ph}</td></tr>`);
+
+  // 服務時間
+  if (o.hours) rows.push(`<tr><td>服務時間</td><td>${o.hours}</td></tr>`);
+
+  // 網站
+  if (o.website) rows.push(`<tr><td>網站</td><td><a href="${o.website}" target="_blank" rel="noopener">${o.website}</a></td></tr>`);
+
+  // 電郵
+  if (o.email) rows.push(`<tr><td>電郵</td><td><a href="mailto:${o.email}">${o.email}</a></td></tr>`);
+
+  // Facebook
+  if (o.facebook) rows.push(`<tr><td>Facebook</td><td><a href="${o.facebook.url}" target="_blank" rel="noopener">${o.facebook.name}</a></td></tr>`);
+
+  // Instagram
+  if (o.instagram) rows.push(`<tr><td>Instagram</td><td><a href="${o.instagram.url}" target="_blank" rel="noopener">${o.instagram.name}</a></td></tr>`);
+
+  // Social buttons row (always last in table if any)
+  const socials = [
+    o.facebook ? `<a class="social-btn fb" href="${o.facebook.url}" target="_blank" rel="noopener">${fbIcon()} Facebook</a>` : "",
+    o.instagram ? `<a class="social-btn ig" href="${o.instagram.url}" target="_blank" rel="noopener">${igIcon()} Instagram</a>` : "",
+  ].filter(Boolean);
+
+  if (socials.length) {
+    rows.push(`<tr><td></td><td><div class="social-btns">${socials.join("")}</div></td></tr>`);
+  }
+
+  return `<table class="detail-table">${rows.join("")}</table>`;
+}
+
+/* ── Facebook page embed (only if pageId provided) ── */
+function buildFbEmbed(o) {
+  if (!o.facebook || !o.facebook.pageId) return "";
+  const pageUrl = encodeURIComponent(o.facebook.url);
+  return `
+    <div class="fb-embed-wrap">
+      <div class="fb-embed-label">Facebook 動態</div>
+      <div class="fb-embed-inner">
+        <iframe
+          src="https://www.facebook.com/plugins/page.php?href=${pageUrl}&tabs=timeline&width=500&height=400&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false&appId"
+          width="100%" height="400" style="border:none;overflow:hidden;display:block;"
+          scrolling="no" frameborder="0" allowfullscreen="true"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+        </iframe>
+      </div>
+    </div>`;
+}
+
+/* ── render cards ── */
+function renderCards() {
+  const list = document.getElementById("org-list");
+  const meta = document.getElementById("results-meta");
+  const filtered = getFiltered();
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>找不到符合條件的機構</h3><p>試試更換搜尋詞或篩選條件</p></div>`;
+    meta.innerHTML = ""; return;
+  }
+  meta.innerHTML = `顯示 <strong>${filtered.length}</strong> 個機構`;
+
+  list.innerHTML = filtered.map(o => {
+    const typeLabel = o.type === "ngo" ? "非牟利機構" : "義工組織";
+    const svcBadges = o.services.map(s => `<span class="badge badge-coral">${serviceLabels[s]}</span>`).join("");
+    const aniTags   = o.animals.map(a => `<span class="badge badge-gray">${animalLabels[a]}</span>`).join("");
+
+    return `
+    <div class="org-card" id="card-${o.id}">
+      <div class="org-card-header" onclick="toggleCard(${o.id})">
+        <div class="org-avatar ${o.avatarColor}">${o.emoji}</div>
+        <div class="org-header-info">
+          <div class="org-name">${o.name}</div>
+          <div class="org-header-tags">
+            <span class="badge badge-sage">${typeLabel}</span>
+            <span class="badge badge-gray">${o.area}</span>
+            ${svcBadges}
+            ${aniTags}
+          </div>
+        </div>
+        <svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="org-card-body">
+        ${buildDetailTable(o)}
+        ${buildFbEmbed(o)}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggleCard(id) {
+  document.getElementById("card-" + id).classList.toggle("expanded");
+}
+
+function updateStats() {
+  document.getElementById("total-count").textContent = orgs.length;
+  document.getElementById("ngo-count").textContent   = orgs.filter(o => o.type === "ngo").length;
+  document.getElementById("vol-count").textContent   = orgs.filter(o => o.type === "volunteer").length;
+}
+
+updateStats();
+renderCards();
+</script>
+
+<!-- 首頁 index.html -->
+<script src="/adb-hk/nav.js"></script>
+
+<!-- animal-rescue-organization-list/index.html -->
+<script src="/adb-hk/nav.js"></script>
+
+</body>
+</html>
