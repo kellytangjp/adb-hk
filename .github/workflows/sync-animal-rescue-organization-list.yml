@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Install dependencies
         run: npm install
@@ -25,8 +25,8 @@ jobs:
 
       - name: Fetch Notion data & build page
         env:
-          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN_RESCUE }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID_RESCUE }}
         run: node scripts/build.js
 
       - name: Commit & push if changed
