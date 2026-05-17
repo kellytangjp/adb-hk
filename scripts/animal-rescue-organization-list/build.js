@@ -76,7 +76,6 @@ function toOrg(page) {
   else if (has('兔'))          icon = '🐰';
   else if (has('野生'))        icon = '🦜';
 
-  // avatarColor for cards: green for volunteer, default (coral-light) for ngo
   const category = prop(page, '類別') || '';
   const avatarColor = category === '獨立義工' ? 'green' : '';
 
@@ -86,11 +85,16 @@ function toOrg(page) {
     ? rawPhone.split(/[;；]/).map(s => s.trim()).filter(Boolean)
     : [];
 
+  // whatsapp: split same way
+  const rawWa = prop(page, 'WhatsApp') || '';
+  const whatsapps = rawWa
+    ? rawWa.split(/[;；]/).map(s => s.trim()).filter(Boolean)
+    : [];
+
   // facebook / instagram stored as URLs in Notion
   const fbUrl = prop(page, 'facebook') || '';
   const igUrl = prop(page, 'instagram') || '';
 
-  // derive display name from URL path (last segment, strip @)
   function urlToName(url) {
     if (!url) return '';
     try {
@@ -100,19 +104,22 @@ function toOrg(page) {
   }
 
   return {
-    name:         prop(page, '機構/組織') || '',
-    en:           prop(page, '英文名稱')  || '',
-    category,                                      // '非牟利機構' | '獨立義工'
+    name:         prop(page, '機構/組織中文名稱') || '',   // updated
+    en:           prop(page, '機構/組織英文名稱')  || '',   // updated
+    category,
     area:         prop(page, '地區')      || '',
     desc:         prop(page, '簡介')      || '',
     services,
     animals,
     phones,
+    whatsapps,
     hours:        prop(page, '服務時間')  || '',
     website:      prop(page, '網站')      || '',
     email:        prop(page, '電郵')      || '',
     facebook: fbUrl ? { name: urlToName(fbUrl), url: fbUrl } : null,
     instagram: igUrl ? { name: '@' + urlToName(igUrl).replace(/^@/, ''), url: igUrl } : null,
+    taxDeductible:  prop(page, '可扣稅')  || false,         // updated from 非牟利機構
+    charityRef:     prop(page, '慈善團體參考編號') || '',   // new
     icon,
     avatarColor,
   };
@@ -260,6 +267,7 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .social-btn.fb:hover{background:#e8f0fe;}
 .social-btn.ig{border-color:#f5c6da;color:#e1306c;}
 .social-btn.ig:hover{background:#fdf0f5;}
+.badge-tax{display:inline-block;background:#eef6ee;color:#3a7a3a;font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
 
 /* EMPTY */
 .empty-state{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;}
@@ -490,24 +498,54 @@ function renderOrgs(list){
     var svcBadges=o.services.map(function(s){return'<span class="badge badge-coral">'+s+'</span>';}).join('');
     var aniBadges=o.animals.map(function(a){return'<span class="badge badge-gray">'+a+'</span>';}).join('');
 
-    /* detail table rows */
+    /* detail table rows – always show all fields, "-" if empty */
     var rows='';
-    rows+='<tr><td>機構簡介</td><td>'+(o.desc||'—')+'</td></tr>';
-    if(o.phones&&o.phones.length){
-      var phLinks=o.phones.map(function(p){return'<a href="tel:'+p.replace(/\\s/g,'')+'">'+p+'</a>';}).join('；');
-      rows+='<tr><td>聯絡電話</td><td>'+phLinks+'</td></tr>';
-    }
-    if(o.hours)rows+='<tr><td>服務時間</td><td>'+o.hours+'</td></tr>';
-    if(o.website)rows+='<tr><td>網站</td><td><a href="'+o.website+'" target="_blank" rel="noopener">'+o.website+'</a></td></tr>';
-    if(o.email)rows+='<tr><td>電郵</td><td><a href="mailto:'+o.email+'">'+o.email+'</a></td></tr>';
-    if(o.facebook)rows+='<tr><td>Facebook</td><td><a href="'+o.facebook.url+'" target="_blank" rel="noopener">'+o.facebook.name+'</a></td></tr>';
-    if(o.instagram)rows+='<tr><td>Instagram</td><td><a href="'+o.instagram.url+'" target="_blank" rel="noopener">'+o.instagram.name+'</a></td></tr>';
 
-    /* social buttons */
+    // 機構簡介
+    rows+='<tr><td>機構簡介</td><td>'+(o.desc||'-')+'</td></tr>';
+
+    // 服務時間
+    rows+='<tr><td>服務時間</td><td>'+(o.hours||'-')+'</td></tr>';
+
+    // 網站
+    rows+='<tr><td>網站</td><td>'+(o.website?'<a href="'+o.website+'" target="_blank" rel="noopener">'+o.website+'</a>':'-')+'</td></tr>';
+
+    // 電話 (multiple, each hyperlinked)
+    if(o.phones&&o.phones.length){
+      var phLinks=o.phones.map(function(p){return'<a href="tel:'+p.replace(/\s/g,'')+'">'+p+'</a>';}).join('；');
+      rows+='<tr><td>電話</td><td>'+phLinks+'</td></tr>';
+    }else{
+      rows+='<tr><td>電話</td><td>-</td></tr>';
+    }
+
+    // WhatsApp (multiple, each hyperlinked to wa.me)
+    if(o.whatsapps&&o.whatsapps.length){
+      var waLinks=o.whatsapps.map(function(w){
+        var num=w.replace(/\s/g,'');
+        // prepend 852 if no country code (i.e. 8-digit HK number)
+        var full=num.length<=8?'852'+num:num;
+        return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';
+      }).join('；');
+      rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
+    }else{
+      rows+='<tr><td>WhatsApp</td><td>-</td></tr>';
+    }
+
+    // 電郵
+    rows+='<tr><td>電郵</td><td>'+(o.email?'<a href="mailto:'+o.email+'">'+o.email+'</a>':'-')+'</td></tr>';
+
+    // 社交媒體 – buttons only, merged into one row
     var socials='';
     if(o.facebook)socials+='<a class="social-btn fb" href="'+o.facebook.url+'" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Facebook</a>';
     if(o.instagram)socials+='<a class="social-btn ig" href="'+o.instagram.url+'" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</a>';
-    if(socials)rows+='<tr><td></td><td><div class="social-btns">'+socials+'</div></td></tr>';
+    rows+='<tr><td>社交媒體</td><td>'+(socials?'<div class="social-btns">'+socials+'</div>':'-')+'</td></tr>';
+
+    // 慈善團體參考編號 + 可扣稅 badge
+    var charityCell=o.charityRef||'-';
+    if(o.charityRef&&o.taxDeductible){
+      charityCell=o.charityRef+' <span class="badge-tax">可扣稅</span>';
+    }
+    rows+='<tr><td>慈善團體<br>參考編號</td><td>'+charityCell+'</td></tr>';
 
     return '<div class="org-card" id="card-'+i+'">'+
       '<div class="org-card-header" onclick="toggleCard('+i+')">'+
