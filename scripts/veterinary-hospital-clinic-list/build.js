@@ -143,28 +143,47 @@ function buildHTML(clinics, lastUpdated, schema) {
     '離島': ['梅窩','馬灣','愉景灣','貝澳'],
   };
 
+  const CHECK_SVG = `<svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const CHECKBOX = `<span class="tp-check">${CHECK_SVG}</span>`;
+
+  function pillCount(dim, val, clinics) {
+    if(dim==='type')    return clinics.filter(c=>c.types.includes(val)).length;
+    if(dim==='nature')  return clinics.filter(c=>c.nature.includes(val)).length;
+    if(dim==='animal')  return clinics.filter(c=>c.animals.includes(val)).length;
+    if(dim==='service') return clinics.filter(c=>c.services.includes(val)).length;
+    return '';
+  }
+
   function multiPills(id, dim, opts) {
     return `<div class="toggle-group" id="${id}">
-${opts.map(o => `  <button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMulti('${dim}','${esc(o)}',this)">${esc(o)}</button>`).join('\n')}
+${opts.map(o => {
+  const cnt = pillCount(dim, o, clinics);
+  const countSpan = cnt !== '' ? `<span class="tp-count">${cnt}</span>` : '';
+  return `  <button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMulti('${dim}','${esc(o)}',this)">${CHECKBOX}<span class="tp-label">${esc(o)}</span>${countSpan}</button>`;
+}).join('\n')}
 </div>`;
   }
 
   function singlePills(id, dim, opts) {
     return `<div class="toggle-group" id="${id}">
-${opts.map(o => `  <button class="toggle-pill" data-val="${esc(o)}" onclick="toggleSingle('${dim}','${esc(o)}',this)">${esc(o)}</button>`).join('\n')}
+${opts.map(o => {
+  const cnt = pillCount(dim, o, clinics);
+  const countSpan = cnt !== '' ? `<span class="tp-count">${cnt}</span>` : '';
+  return `  <button class="toggle-pill" data-val="${esc(o)}" onclick="toggleSingle('${dim}','${esc(o)}',this)">${CHECKBOX}<span class="tp-label">${esc(o)}</span>${countSpan}</button>`;
+}).join('\n')}
 </div>`;
   }
 
   // Drawer sub-district pills (grouped by region, shown dynamically)
   const drawerSubPills = Object.entries(subsByRegion).map(([region, subs]) =>
     `<div class="sub-group" data-region="${esc(region)}" style="display:none">
-${subs.map(s => `  <button class="toggle-pill" data-val="${esc(s)}" onclick="toggleSingle('subDistrict','${esc(s)}',this)">${esc(s)}</button>`).join('\n')}
+${subs.map(s => `  <button class="toggle-pill" data-val="${esc(s)}" onclick="toggleSingle('subDistrict','${esc(s)}',this)">${CHECKBOX}<span class="tp-label">${esc(s)}</span></button>`).join('\n')}
 </div>`
   ).join('\n');
 
   const sidebarSubPills = Object.entries(subsByRegion).map(([region, subs]) =>
     `<div class="sub-group" data-region="${esc(region)}" style="display:none">
-${subs.map(s => `  <button class="toggle-pill sub-pill" data-val="${esc(s)}" onclick="toggleSingle('subDistrict','${esc(s)}',this)">${esc(s)}</button>`).join('\n')}
+${subs.map(s => `  <button class="toggle-pill sub-pill" data-val="${esc(s)}" onclick="toggleSingle('subDistrict','${esc(s)}',this)">${CHECKBOX}<span class="tp-label">${esc(s)}</span></button>`).join('\n')}
 </div>`
   ).join('\n');
 
@@ -217,9 +236,16 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .filter-body{display:none;padding:0 1rem 1rem;}
 .filter-group.open .filter-body{display:block;}
 .toggle-group{display:flex;flex-direction:column;gap:0;}
-.toggle-pill{display:flex;align-items:center;padding:7px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:left;width:100%;}
+.toggle-pill{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;text-align:left;width:100%;}
 .toggle-pill:hover{background:var(--bg-soft);color:var(--text-primary);}
 .toggle-pill.active{background:var(--coral-light);color:var(--coral);font-weight:500;}
+.tp-check{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.toggle-pill.active .tp-check{background:var(--coral);border-color:var(--coral);}
+.tp-check-icon{display:none;width:9px;height:9px;}
+.toggle-pill.active .tp-check-icon{display:block;}
+.tp-label{flex:1;}
+.tp-count{font-size:11px;color:var(--text-muted);background:var(--bg-soft);border-radius:10px;padding:1px 6px;border:1px solid var(--border);flex-shrink:0;}
+.toggle-pill.active .tp-count{background:var(--coral-light);border-color:rgba(255,107,43,.2);color:var(--coral);}
 .sub-group{margin-top:0;padding-left:12px;}
 .sub-group .toggle-pill{font-size:12px;padding:5px 10px;}
 
@@ -241,8 +267,10 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .dt-sub-row.active{background:var(--coral-light);}
 .dt-sub-label{flex:1;font-size:12px;color:var(--text-secondary);}
 .dt-sub-row.active .dt-sub-label{color:var(--coral);font-weight:500;}
-.dt-sub-count{font-size:11px;color:var(--text-muted);}
-.dt-sub-row.active .dt-sub-count{color:var(--coral);}
+.dt-inline-count{font-size:11px;color:var(--text-muted);font-weight:400;}
+.dt-region-row.active .dt-inline-count,.dt-sub-row.active .dt-inline-count{color:var(--coral);}
+.dt-sub-row .tp-check{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.dt-sub-row.active .tp-check{background:var(--coral);border-color:var(--coral);}
 
 /* CONTENT */
 .content{min-width:0;}
@@ -372,7 +400,7 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 
 <div class="main">
   <aside class="sidebar">
-    <div class="filter-group open" id="grp-district">
+    <div class="filter-group" id="grp-district">
       <button class="filter-group-header" onclick="toggleGroup('grp-district')">
         <span class="filter-group-title">地區 / 分區<span class="filter-active-badge" id="badge-district"></span></span>
         <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -465,8 +493,7 @@ var subsByRegion = ${JSON.stringify(subsByRegion)};
     rRow.className = 'dt-region-row';
     rRow.innerHTML =
       '<svg class="dt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'+
-      '<span class="dt-region-label">'+region+'</span>'+
-      '<span class="dt-count">'+rCount+'</span>';
+      '<span class="dt-region-label">'+region+' <span class="dt-inline-count">('+rCount+')</span></span>';
     rRow.addEventListener('click', function(e){
       // toggle open/close of subs
       regionDiv.classList.toggle('open');
@@ -497,8 +524,8 @@ var subsByRegion = ${JSON.stringify(subsByRegion)};
       var sRow = document.createElement('div');
       sRow.className = 'dt-sub-row';
       sRow.innerHTML =
-        '<span class="dt-sub-label">'+sub+'</span>'+
-        '<span class="dt-sub-count">'+sCount+'</span>';
+        '<span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'+
+        '<span class="dt-sub-label">'+sub+' <span class="dt-inline-count">('+sCount+')</span></span>';
       sRow.addEventListener('click', function(e){
         e.stopPropagation();
         if(activeSubDistrict===sub){
@@ -681,7 +708,7 @@ function renderClinics(list){
 
     // 電話 (multiple, each hyperlinked)
     if(c.phones&&c.phones.length){
-      var phLinks=c.phones.map(function(p){return'<a href="tel:'+p.replace(/\s/g,'')+'">'+p+'</a>';}).join('；');
+      var phLinks=c.phones.map(function(p){var digits=p.replace(/\D/g,'');var full=digits.length<=8?'+852'+digits:'+'+digits;return'<a href="tel:'+full+'">'+ p+'</a>';}).join('；');
       rows+='<tr><td>聯絡電話</td><td>'+phLinks+'</td></tr>';
     }else{
       rows+='<tr><td>聯絡電話</td><td>-</td></tr>';
@@ -690,8 +717,8 @@ function renderClinics(list){
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(c.whatsapps&&c.whatsapps.length){
       var waLinks=c.whatsapps.map(function(w){
-        var num=w.replace(/\D/g,'');
-        var full=num.length<=8?'852'+num:num;
+        var digits=w.replace(/\D/g,'');
+        var full=digits.length<=8?'852'+digits:digits;
         return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';
       }).join('；');
       rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
