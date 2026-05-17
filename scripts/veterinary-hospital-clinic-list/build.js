@@ -133,6 +133,7 @@ function buildHTML(clinics, lastUpdated, schema) {
   const typeOptions      = schema['類型']    || ['診所','醫院','專科中心','大學醫療中心'];
   const natureOptions    = schema['機構性質'] || ['私營','非牟利','政府','大學'];
   const animalOptions    = schema['接診動物'] || ['貓貓 🐈‍⬛','狗狗 🐕','異寵動物🦎'];
+  const serviceOptions   = schema['服務種類'] || ['一般診症','外科手術','住院','急症','牙科','腫瘤科','專科','針灸','中獸醫','異寵','水療','超聲波','X-ray','CT掃描','內視鏡','心臟科','24小時'];
 
   // Sub-districts by region (static — matches Notion options)
   const subsByRegion = {
@@ -198,12 +199,6 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .page-header h1{font-size:26px;font-weight:600;color:var(--text-primary);margin-bottom:6px;letter-spacing:-.3px;}
 .page-header-sub{font-size:14px;color:var(--text-secondary);font-weight:300;margin-bottom:1.75rem;}
 
-/* SCORECARDS */
-.scorecards{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;}
-.scorecard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;min-width:108px;text-align:center;box-shadow:0 2px 8px var(--shadow);}
-.scorecard-num{font-size:36px;font-weight:600;color:var(--coral);line-height:1;margin-bottom:6px;}
-.scorecard-label{font-size:12px;color:var(--text-secondary);white-space:nowrap;}
-.update-note{font-size:12px;color:var(--text-muted);margin-left:auto;}
 
 /* MAIN */
 .main{max-width:1100px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:230px 1fr;gap:1.5rem;align-items:start;}
@@ -221,11 +216,33 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .filter-group.open .filter-chevron{transform:rotate(180deg);}
 .filter-body{display:none;padding:0 1rem 1rem;}
 .filter-group.open .filter-body{display:block;}
-.toggle-group{display:flex;flex-wrap:wrap;gap:6px;}
-.toggle-pill{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--white);font-family:var(--font);font-size:12px;color:var(--text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;}
-.toggle-pill:hover{border-color:var(--coral);color:var(--coral);}
-.toggle-pill.active{background:var(--coral);border-color:var(--coral);color:white;font-weight:500;}
-.sub-group{margin-top:6px;}
+.toggle-group{display:flex;flex-direction:column;gap:0;}
+.toggle-pill{display:flex;align-items:center;padding:7px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:left;width:100%;}
+.toggle-pill:hover{background:var(--bg-soft);color:var(--text-primary);}
+.toggle-pill.active{background:var(--coral-light);color:var(--coral);font-weight:500;}
+.sub-group{margin-top:0;padding-left:12px;}
+.sub-group .toggle-pill{font-size:12px;padding:5px 10px;}
+
+.district-tree{display:flex;flex-direction:column;gap:2px;}
+.dt-region{margin-bottom:4px;}
+.dt-region-row{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;cursor:pointer;user-select:none;transition:background .15s;}
+.dt-region-row:hover{background:var(--bg-soft);}
+.dt-region-row.active{background:var(--coral-light);}
+.dt-region-label{flex:1;font-size:13px;font-weight:500;color:var(--text-primary);}
+.dt-region-row.active .dt-region-label{color:var(--coral);}
+.dt-count{font-size:11px;color:var(--text-muted);background:var(--bg-soft);border-radius:10px;padding:1px 7px;border:1px solid var(--border);}
+.dt-region-row.active .dt-count{background:var(--coral-light);border-color:rgba(255,107,43,.2);color:var(--coral);}
+.dt-chevron{width:13px;height:13px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;}
+.dt-region.open .dt-chevron{transform:rotate(180deg);}
+.dt-subs{display:none;padding-left:12px;margin-top:2px;display:flex;flex-direction:column;gap:1px;}
+.dt-region.open .dt-subs{display:flex;}
+.dt-sub-row{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;cursor:pointer;user-select:none;transition:background .15s;}
+.dt-sub-row:hover{background:var(--bg-soft);}
+.dt-sub-row.active{background:var(--coral-light);}
+.dt-sub-label{flex:1;font-size:12px;color:var(--text-secondary);}
+.dt-sub-row.active .dt-sub-label{color:var(--coral);font-weight:500;}
+.dt-sub-count{font-size:11px;color:var(--text-muted);}
+.dt-sub-row.active .dt-sub-count{color:var(--coral);}
 
 /* CONTENT */
 .content{min-width:0;}
@@ -282,6 +299,8 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .social-btn.fb:hover{background:#e8f0fe;}
 .social-btn.ig{border-color:#f5c6da;color:#e1306c;}
 .social-btn.ig:hover{background:#fdf0f5;}
+.svc-labels{display:flex;flex-wrap:wrap;gap:4px;}
+.svc-label{display:inline-block;background:var(--bg-soft);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;color:var(--text-secondary);white-space:nowrap;}
 .map-link{display:inline-flex;align-items:center;gap:4px;color:var(--coral);font-size:12px;font-weight:500;margin-top:2px;}
 .map-link:hover{text-decoration:underline;}
 
@@ -347,28 +366,19 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
     </div>
     <h1>🏥 動物診所/醫院資料庫</h1>
     <p class="page-header-sub">搜尋香港各區動物診所、醫院及專科中心，為毛孩找到最合適的醫療幫助</p>
-    <div class="scorecards">
-      <div class="scorecard"><div class="scorecard-num" id="totalCount">0</div><div class="scorecard-label">登記診所/醫院</div></div>
-      <div class="scorecard"><div class="scorecard-num" id="privateCount">0</div><div class="scorecard-label">私營</div></div>
-      <div class="scorecard"><div class="scorecard-num" id="ngoCount">0</div><div class="scorecard-label">非牟利/政府/大學</div></div>
-      <div class="update-note">資料更新：${lastUpdated}</div>
-    </div>
   </div>
+</div>
 </div>
 
 <div class="main">
   <aside class="sidebar">
-    <div class="filter-group" id="grp-district">
+    <div class="filter-group open" id="grp-district">
       <button class="filter-group-header" onclick="toggleGroup('grp-district')">
-        <span class="filter-group-title">地區<span class="filter-active-badge" id="badge-district"></span></span>
+        <span class="filter-group-title">地區 / 分區<span class="filter-active-badge" id="badge-district"></span></span>
         <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div class="filter-body">
-        ${singlePills('district-toggles', 'district', districtOptions)}
-        <div id="sub-district-wrap" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:none;">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px;">分區</div>
-          ${sidebarSubPills}
-        </div>
+        <div class="district-tree" id="district-tree"></div>
       </div>
     </div>
     <div class="filter-group" id="grp-type">
@@ -398,6 +408,15 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
         ${multiPills('animal-toggles', 'animal', animalOptions)}
       </div>
     </div>
+    <div class="filter-group" id="grp-service">
+      <button class="filter-group-header" onclick="toggleGroup('grp-service')">
+        <span class="filter-group-title">服務種類<span class="filter-active-badge" id="badge-service"></span></span>
+        <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="filter-body">
+        ${multiPills('service-toggles', 'service', serviceOptions)}
+      </div>
+    </div>
   </aside>
 
   <div class="content">
@@ -419,9 +438,89 @@ var clinics = ${clinicsJson};
 var subsByRegion = ${JSON.stringify(subsByRegion)};
 
 /* ── stats ── */
-document.getElementById('totalCount').textContent   = clinics.length;
-document.getElementById('privateCount').textContent = clinics.filter(function(c){return c.nature.indexOf('私營')>=0;}).length;
-document.getElementById('ngoCount').textContent     = clinics.filter(function(c){return c.nature.some(function(n){return n==='非牟利'||n==='政府'||n==='大學';});}).length;
+
+/* ── build district tree with counts ── */
+(function buildDistrictTree(){
+  var subsByRegion = ${JSON.stringify(subsByRegion)};
+  var tree = document.getElementById('district-tree');
+  if(!tree) return;
+
+  // count per district and subDistrict
+  var distCount = {};
+  var subCount = {};
+  clinics.forEach(function(c){
+    if(c.district){ distCount[c.district]=(distCount[c.district]||0)+1; }
+    if(c.subDistrict){ subCount[c.subDistrict]=(subCount[c.subDistrict]||0)+1; }
+  });
+
+  Object.keys(subsByRegion).forEach(function(region){
+    var subs = subsByRegion[region];
+    var rCount = distCount[region]||0;
+
+    var regionDiv = document.createElement('div');
+    regionDiv.className = 'dt-region';
+
+    // region row
+    var rRow = document.createElement('div');
+    rRow.className = 'dt-region-row';
+    rRow.innerHTML =
+      '<svg class="dt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'+
+      '<span class="dt-region-label">'+region+'</span>'+
+      '<span class="dt-count">'+rCount+'</span>';
+    rRow.addEventListener('click', function(e){
+      // toggle open/close of subs
+      regionDiv.classList.toggle('open');
+      // if already active district = this, deselect; else select
+      if(activeDistrict===region){
+        activeDistrict=null; activeSubDistrict=null;
+        rRow.classList.remove('active');
+        updateBadge('district',0);
+      } else {
+        // deactivate previous
+        document.querySelectorAll('.dt-region-row').forEach(function(r){r.classList.remove('active');});
+        document.querySelectorAll('.dt-sub-row').forEach(function(r){r.classList.remove('active');});
+        activeDistrict=region; activeSubDistrict=null;
+        rRow.classList.add('active');
+        updateBadge('district',1);
+        // open this region
+        regionDiv.classList.add('open');
+      }
+      syncDrawerToState(); updateFloatCount(); filterClinics(); renderPills();
+    });
+    regionDiv.appendChild(rRow);
+
+    // sub rows
+    var subsDiv = document.createElement('div');
+    subsDiv.className = 'dt-subs';
+    subs.forEach(function(sub){
+      var sCount = subCount[sub]||0;
+      var sRow = document.createElement('div');
+      sRow.className = 'dt-sub-row';
+      sRow.innerHTML =
+        '<span class="dt-sub-label">'+sub+'</span>'+
+        '<span class="dt-sub-count">'+sCount+'</span>';
+      sRow.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(activeSubDistrict===sub){
+          activeSubDistrict=null; sRow.classList.remove('active');
+        } else {
+          document.querySelectorAll('.dt-sub-row').forEach(function(r){r.classList.remove('active');});
+          // also ensure parent district is selected
+          if(activeDistrict!==region){
+            document.querySelectorAll('.dt-region-row').forEach(function(r){r.classList.remove('active');});
+            activeDistrict=region; rRow.classList.add('active');
+            updateBadge('district',1);
+          }
+          activeSubDistrict=sub; sRow.classList.add('active');
+        }
+        syncDrawerToState(); updateFloatCount(); filterClinics(); renderPills();
+      });
+      subsDiv.appendChild(sRow);
+    });
+    regionDiv.appendChild(subsDiv);
+    tree.appendChild(regionDiv);
+  });
+})();
 
 /* ── filter state ── */
 var activeDistrict    = null;
@@ -429,13 +528,14 @@ var activeSubDistrict = null;
 var activeTypes       = [];
 var activeNature      = [];
 var activeAnimals     = [];
+var activeServices    = [];
 
 /* ── sidebar collapse ── */
 function toggleGroup(id){document.getElementById(id).classList.toggle('open');}
 
 /* ── multi-select ── */
 function toggleMulti(dim,val,btn){
-  var arr = dim==='type' ? activeTypes : dim==='nature' ? activeNature : activeAnimals;
+  var arr = dim==='type' ? activeTypes : dim==='nature' ? activeNature : dim==='service' ? activeServices : activeAnimals;
   var idx = arr.indexOf(val);
   if(idx>=0){arr.splice(idx,1);btn.classList.remove('active');}
   else{arr.push(val);btn.classList.add('active');}
@@ -499,6 +599,7 @@ function filterClinics(){
     if(activeTypes.length&&!c.types.some(function(t){return activeTypes.indexOf(t)>=0;}))return false;
     if(activeNature.length&&!c.nature.some(function(n){return activeNature.indexOf(n)>=0;}))return false;
     if(activeAnimals.length&&!c.animals.some(function(a){return activeAnimals.indexOf(a)>=0;}))return false;
+    if(activeServices.length&&!c.services.some(function(s){return activeServices.indexOf(s)>=0;}))return false;
     if(q&&![c.nameCN,c.nameEN,c.addressCN,c.addressEN,c.district,c.subDistrict].some(function(s){return s&&s.toLowerCase().indexOf(q)>=0;}))return false;
     return true;
   });
@@ -536,6 +637,11 @@ function renderPills(){
     var i=activeAnimals.indexOf(v);if(i>=0)activeAnimals.splice(i,1);
     var btn=document.querySelector('#animal-toggles [data-val="'+v+'"]');if(btn)btn.classList.remove('active');
     updateBadge('animal',activeAnimals.length);filterClinics();renderPills();
+  }));});
+  activeServices.forEach(function(v){c.appendChild(makePill(v,function(){
+    var i=activeServices.indexOf(v);if(i>=0)activeServices.splice(i,1);
+    var btn=document.querySelector('#service-toggles [data-val="'+v+'"]');if(btn)btn.classList.remove('active');
+    updateBadge('service',activeServices.length);filterClinics();renderPills();
   }));});
 }
 function makePill(label,onRemove){
@@ -602,9 +708,9 @@ function renderClinics(list){
     // 網站
     rows+='<tr><td>網站</td><td>'+(c.website?'<a href="'+c.website+'" target="_blank" rel="noopener">'+c.website+'</a>':'-')+'</td></tr>';
 
-    // 服務種類
-    var svcVal=c.services.length?c.services.join('、'):'-';
-    rows+='<tr><td>服務種類</td><td>'+svcVal+'</td></tr>';
+    // 服務種類 – rendered as labels
+    var svcVal=c.services.length?c.services.map(function(s){return'<span class="svc-label">'+s+'</span>';}).join(''):'<span style="color:var(--text-muted)">-</span>';
+    rows+='<tr><td>服務種類</td><td><div class="svc-labels">'+svcVal+'</div></td></tr>';
 
     // 社交媒體
     var socials='';
@@ -659,6 +765,7 @@ function syncDrawerToState(){
   document.querySelectorAll('#drawer-type-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeTypes.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#drawer-nature-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeNature.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#drawer-animal-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeAnimals.indexOf(b.dataset.val)>=0);});
+  document.querySelectorAll('#drawer-service-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeServices.indexOf(b.dataset.val)>=0);});
 }
 function syncSidebarToState(){
   document.querySelectorAll('#district-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeDistrict===b.dataset.val);});
@@ -669,6 +776,7 @@ function syncSidebarToState(){
   updateBadge('type',activeTypes.length);
   updateBadge('nature',activeNature.length);
   updateBadge('animal',activeAnimals.length);
+  updateBadge('service',activeServices.length);
 }
 function toggleSingleDrawer(dim,val,btn){
   if(dim==='district'){
@@ -711,7 +819,7 @@ function toggleSingleDrawer(dim,val,btn){
   syncSidebarToState();updateFloatCount();filterClinics();renderPills();
 }
 function toggleMultiDrawer(dim,val,btn){
-  var arr=dim==='type'?activeTypes:dim==='nature'?activeNature:activeAnimals;
+  var arr=dim==='type'?activeTypes:dim==='nature'?activeNature:dim==='service'?activeServices:activeAnimals;
   var idx=arr.indexOf(val);
   if(idx>=0){arr.splice(idx,1);btn.classList.remove('active');}
   else{arr.push(val);btn.classList.add('active');}
@@ -719,16 +827,16 @@ function toggleMultiDrawer(dim,val,btn){
 }
 function clearAllFilters(){
   activeDistrict=null;activeSubDistrict=null;
-  activeTypes.length=0;activeNature.length=0;activeAnimals.length=0;
+  activeTypes.length=0;activeNature.length=0;activeAnimals.length=0;activeServices.length=0;
   document.querySelectorAll('.toggle-pill').forEach(function(b){b.classList.remove('active');});
   document.getElementById('sub-district-wrap').style.display='none';
   document.getElementById('drawer-sub-district-wrap').style.display='none';
   document.querySelectorAll('.sub-group').forEach(function(g){g.style.display='none';});
-  updateBadge('district',0);updateBadge('type',0);updateBadge('nature',0);updateBadge('animal',0);
+  updateBadge('district',0);updateBadge('type',0);updateBadge('nature',0);updateBadge('animal',0);updateBadge('service',0);
   updateFloatCount();filterClinics();renderPills();
 }
 function updateFloatCount(){
-  var total=(activeDistrict?1:0)+(activeSubDistrict?1:0)+activeTypes.length+activeNature.length+activeAnimals.length;
+  var total=(activeDistrict?1:0)+(activeSubDistrict?1:0)+activeTypes.length+activeNature.length+activeAnimals.length+activeServices.length;
   var el=document.getElementById('floatFilterCount');
   el.textContent=total;
   if(total>0)el.classList.add('visible');else el.classList.remove('visible');
@@ -796,6 +904,12 @@ window.addEventListener('scroll',function(){
       <div class="filter-drawer-label">接診動物</div>
       <div class="toggle-group" id="drawer-animal-toggles">
         ${animalOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('animal','${esc(o)}',this)">${esc(o)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="filter-drawer-section">
+      <div class="filter-drawer-label">服務種類</div>
+      <div class="toggle-group" id="drawer-service-toggles">
+        ${serviceOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('service','${esc(o)}',this)">${esc(o)}</button>`).join('')}
       </div>
     </div>
   </div>
