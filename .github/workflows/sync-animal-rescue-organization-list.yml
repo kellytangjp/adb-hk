@@ -27,7 +27,7 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN_RESCUE }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID_RESCUE }}
-        run: node scripts/build.js
+        run: node scripts/animal-rescue-organization-list/build.js
 
       - name: Commit & push if changed
         run: |
