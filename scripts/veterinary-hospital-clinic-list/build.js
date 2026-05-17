@@ -588,44 +588,18 @@ function toggleMulti(dim,val,btn){
   filterClinics();renderPills();
 }
 
-/* ── single-select (district / subDistrict) ── */
+/* ── single-select (subDistrict from drawer only) ── */
 function toggleSingle(dim,val,btn){
-  if(dim==='district'){
-    if(activeDistrict===val){
-      activeDistrict=null;btn.classList.remove('active');
-      updateBadge('district',0);
-      // hide sub-district
-      activeSubDistrict=null;
-      document.getElementById('sub-district-wrap').style.display='none';
-      document.querySelectorAll('.sub-group').forEach(function(g){g.style.display='none';});
-    } else {
-      document.querySelectorAll('#district-toggles .toggle-pill').forEach(function(b){b.classList.remove('active');});
-      activeDistrict=val;btn.classList.add('active');
-      updateBadge('district',1);
-      // show relevant sub-districts
-      activeSubDistrict=null;
-      document.querySelectorAll('.sub-pill').forEach(function(b){b.classList.remove('active');});
-      var wrap=document.getElementById('sub-district-wrap');
-      wrap.style.display='';
-      document.querySelectorAll('#sub-district-wrap .sub-group').forEach(function(g){
-        g.style.display=g.dataset.region===val?'flex':'none';
-        g.style.flexWrap='wrap';g.style.gap='6px';
-      });
-    }
-  } else if(dim==='subDistrict'){
+  if(dim==='subDistrict'){
     if(activeSubDistrict===val){
       activeSubDistrict=null;btn.classList.remove('active');
     } else {
-      document.querySelectorAll('.sub-pill').forEach(function(b){b.classList.remove('active');});
-      // also sync drawer
+      document.querySelectorAll('.dt-sub-row').forEach(function(b){b.classList.remove('active');});
       document.querySelectorAll('#drawer-sub-district-wrap .toggle-pill').forEach(function(b){b.classList.remove('active');});
       activeSubDistrict=val;btn.classList.add('active');
-      // sync drawer button
-      var db=document.querySelector('#drawer-sub-district-wrap [data-val="'+val+'"]');
-      if(db)db.classList.add('active');
     }
+    filterClinics();renderPills();updateFloatCount();
   }
-  filterClinics();renderPills();
 }
 
 function updateBadge(dim,count){
@@ -794,7 +768,7 @@ function closeFilterDrawer(){
 }
 function syncDrawerToState(){
   /* district tree sidebar synced via buildDistrictTree active classes */
-  // show/hide sub-district in drawer
+  document.querySelectorAll('#drawer-district-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeDistrict===b.dataset.val);});
   var dWrap=document.getElementById('drawer-sub-district-wrap');
   if(activeDistrict){
     dWrap.style.display='';
@@ -803,17 +777,17 @@ function syncDrawerToState(){
       g.style.flexWrap='wrap';g.style.gap='6px';
     });
     document.querySelectorAll('#drawer-sub-district-wrap .toggle-pill').forEach(function(b){b.classList.toggle('active',activeSubDistrict===b.dataset.val);});
-  }else{dWrap.style.display='none';}
+  } else { dWrap.style.display='none'; }
   document.querySelectorAll('#drawer-type-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeTypes.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#drawer-nature-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeNature.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#drawer-animal-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeAnimals.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#drawer-service-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeServices.indexOf(b.dataset.val)>=0);});
 }
 function syncSidebarToState(){
-  document.querySelectorAll('#district-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeDistrict===b.dataset.val);});
   document.querySelectorAll('#type-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeTypes.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#nature-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeNature.indexOf(b.dataset.val)>=0);});
   document.querySelectorAll('#animal-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeAnimals.indexOf(b.dataset.val)>=0);});
+  document.querySelectorAll('#service-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeServices.indexOf(b.dataset.val)>=0);});
   updateBadge('district',activeDistrict?1:0);
   updateBadge('type',activeTypes.length);
   updateBadge('nature',activeNature.length);
@@ -822,12 +796,27 @@ function syncSidebarToState(){
 }
 function toggleSingleDrawer(dim,val,btn){
   if(dim==='district'){
-    if(activeDistrict===val){
-      activeDistrict=null;activeSubDistrict=null;btn.classList.remove('active');
+    var wasActive = activeDistrict===val;
+    document.querySelectorAll('#drawer-district-toggles .toggle-pill').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.dt-region-header').forEach(function(r){r.classList.remove('active');});
+    document.querySelectorAll('.dt-sub-row').forEach(function(r){r.classList.remove('active');});
+    document.querySelectorAll('.dt-region').forEach(function(d){d.classList.remove('open');});
+    if(wasActive){
+      activeDistrict=null; activeSubDistrict=null;
       document.getElementById('drawer-sub-district-wrap').style.display='none';
-    }else{
-      document.querySelectorAll('#drawer-district-toggles .toggle-pill').forEach(function(b){b.classList.remove('active');});
-      activeDistrict=val;activeSubDistrict=null;btn.classList.add('active');
+      updateBadge('district',0);
+    } else {
+      activeDistrict=val; activeSubDistrict=null;
+      btn.classList.add('active');
+      updateBadge('district',1);
+      // sync sidebar tree
+      document.querySelectorAll('.dt-region').forEach(function(d){
+        var hdr=d.querySelector('.dt-region-header');
+        if(hdr && hdr.querySelector('.dt-region-label') && hdr.querySelector('.dt-region-label').textContent.trim().startsWith(val)){
+          hdr.classList.add('active'); d.classList.add('open');
+        }
+      });
+      // show drawer sub-district
       var dWrap=document.getElementById('drawer-sub-district-wrap');
       dWrap.style.display='';
       document.querySelectorAll('#drawer-sub-district-wrap .sub-group').forEach(function(g){
@@ -835,27 +824,21 @@ function toggleSingleDrawer(dim,val,btn){
         g.style.flexWrap='wrap';g.style.gap='6px';
       });
       document.querySelectorAll('#drawer-sub-district-wrap .toggle-pill').forEach(function(b){b.classList.remove('active');});
-      // sync sidebar
-      var sbWrap=document.getElementById('sub-district-wrap');
-      sbWrap.style.display='';
-      document.querySelectorAll('#sub-district-wrap .sub-group').forEach(function(g){
-        g.style.display=g.dataset.region===val?'flex':'none';
-        g.style.flexWrap='wrap';g.style.gap='6px';
-      });
-      document.querySelectorAll('.sub-pill').forEach(function(b){b.classList.remove('active');});
-      var sideDistrBtn=document.querySelector('#district-toggles [data-val="'+val+'"]');
-      document.querySelectorAll('#district-toggles .toggle-pill').forEach(function(b){b.classList.remove('active');});
-      if(sideDistrBtn)sideDistrBtn.classList.add('active');
     }
-  }else if(dim==='subDistrict'){
+  } else if(dim==='subDistrict'){
     if(activeSubDistrict===val){
       activeSubDistrict=null;btn.classList.remove('active');
-    }else{
+      document.querySelectorAll('.dt-sub-row').forEach(function(b){b.classList.remove('active');});
+    } else {
       document.querySelectorAll('#drawer-sub-district-wrap .toggle-pill').forEach(function(b){b.classList.remove('active');});
-      activeSubDistrict=val;btn.classList.add('active');
-      var sideBtn=document.querySelector('.sub-pill[data-val="'+val+'"]');
-      document.querySelectorAll('.sub-pill').forEach(function(b){b.classList.remove('active');});
-      if(sideBtn)sideBtn.classList.add('active');
+      document.querySelectorAll('.dt-sub-row').forEach(function(b){b.classList.remove('active');});
+      activeSubDistrict=val; btn.classList.add('active');
+      // sync sidebar tree sub-row
+      document.querySelectorAll('.dt-sub-row').forEach(function(r){
+        if(r.querySelector('.dt-sub-label') && r.querySelector('.dt-sub-label').textContent.trim().startsWith(val)){
+          r.classList.add('active');
+        }
+      });
     }
   }
   syncSidebarToState();updateFloatCount();filterClinics();renderPills();
@@ -873,9 +856,7 @@ function clearAllFilters(){
   document.querySelectorAll('.toggle-pill').forEach(function(b){b.classList.remove('active');});
   document.querySelectorAll('.dt-region-header,.dt-sub-row').forEach(function(b){b.classList.remove('active');});
   document.querySelectorAll('.dt-region').forEach(function(d){d.classList.remove('open');});
-  document.getElementById('sub-district-wrap').style.display='none';
-  document.getElementById('drawer-sub-district-wrap').style.display='none';
-  document.querySelectorAll('.sub-group').forEach(function(g){g.style.display='none';});
+  var dw=document.getElementById('drawer-sub-district-wrap');if(dw)dw.style.display='none';
   updateBadge('district',0);updateBadge('type',0);updateBadge('nature',0);updateBadge('animal',0);updateBadge('service',0);
   updateFloatCount();filterClinics();renderPills();
 }
