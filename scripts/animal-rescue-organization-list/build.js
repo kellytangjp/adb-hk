@@ -54,7 +54,7 @@ async function fetchAll() {
       database_id: DATABASE_ID,
       start_cursor: cursor,
       page_size: 100,
-      sorts: [{ property: '機構/組織', direction: 'ascending' }],
+      sorts: [{ property: '機構/組織中文名稱', direction: 'ascending' }],
     });
     pages.push(...res.results);
     cursor = res.has_more ? res.next_cursor : undefined;
