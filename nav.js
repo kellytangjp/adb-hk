@@ -1,7 +1,7 @@
 /* ── ADB HK Shared Navigation ── */
 (function () {
   const NAV_LINKS = [
-    { label: "機構資料庫", href: "/adb-hk/animal-rescue-organization-list/" },
+    { label: "動物拯救資料庫", href: "/adb-hk/animal-rescue-organization-list/" },
     { label: "緊急求助",   href: "/adb-hk/emergency/" },
     { label: "關於我們",   href: "/adb-hk/about/" },
   ];
@@ -30,6 +30,10 @@
 
   const navCSS = `
 <style id="adb-nav-style">
+/* ── global reset (applied once via nav.js) ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans TC', sans-serif; background: #F7F8F7; color: #2F2F2F; }
+
 #adb-nav {
   background: #FFFFFF; border-bottom: 1px solid #E5E7EB;
   padding: 0 2rem; height: 60px;
@@ -79,6 +83,7 @@
 .mobile-menu a.active { font-weight: 500; }
 
 @media (max-width: 680px) {
+  #adb-nav { padding: 0 1rem; }
   #adb-nav .nav-links { display: none; }
   .hamburger { display: flex; }
 }
