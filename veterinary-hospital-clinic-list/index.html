@@ -47,9 +47,16 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .filter-body{display:none;padding:0 1rem 1rem;}
 .filter-group.open .filter-body{display:block;}
 .toggle-group{display:flex;flex-direction:column;gap:0;}
-.toggle-pill{display:flex;align-items:center;padding:7px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;white-space:nowrap;text-align:left;width:100%;}
+.toggle-pill{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;text-align:left;width:100%;}
 .toggle-pill:hover{background:var(--bg-soft);color:var(--text-primary);}
 .toggle-pill.active{background:var(--coral-light);color:var(--coral);font-weight:500;}
+.tp-check{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.toggle-pill.active .tp-check{background:var(--coral);border-color:var(--coral);}
+.tp-check-icon{display:none;width:9px;height:9px;}
+.toggle-pill.active .tp-check-icon{display:block;}
+.tp-label{flex:1;}
+.tp-count{font-size:11px;color:var(--text-muted);background:var(--bg-soft);border-radius:10px;padding:1px 6px;border:1px solid var(--border);flex-shrink:0;}
+.toggle-pill.active .tp-count{background:var(--coral-light);border-color:rgba(255,107,43,.2);color:var(--coral);}
 .sub-group{margin-top:0;padding-left:12px;}
 .sub-group .toggle-pill{font-size:12px;padding:5px 10px;}
 
@@ -71,8 +78,10 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .dt-sub-row.active{background:var(--coral-light);}
 .dt-sub-label{flex:1;font-size:12px;color:var(--text-secondary);}
 .dt-sub-row.active .dt-sub-label{color:var(--coral);font-weight:500;}
-.dt-sub-count{font-size:11px;color:var(--text-muted);}
-.dt-sub-row.active .dt-sub-count{color:var(--coral);}
+.dt-inline-count{font-size:11px;color:var(--text-muted);font-weight:400;}
+.dt-region-row.active .dt-inline-count,.dt-sub-row.active .dt-inline-count{color:var(--coral);}
+.dt-sub-row .tp-check{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.dt-sub-row.active .tp-check{background:var(--coral);border-color:var(--coral);}
 
 /* CONTENT */
 .content{min-width:0;}
@@ -202,7 +211,7 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 
 <div class="main">
   <aside class="sidebar">
-    <div class="filter-group open" id="grp-district">
+    <div class="filter-group" id="grp-district">
       <button class="filter-group-header" onclick="toggleGroup('grp-district')">
         <span class="filter-group-title">地區 / 分區<span class="filter-active-badge" id="badge-district"></span></span>
         <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -218,10 +227,10 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
       </button>
       <div class="filter-body">
         <div class="toggle-group" id="type-toggles">
-  <button class="toggle-pill" data-val="診所" onclick="toggleMulti('type','診所',this)">診所</button>
-  <button class="toggle-pill" data-val="醫院" onclick="toggleMulti('type','醫院',this)">醫院</button>
-  <button class="toggle-pill" data-val="專科中心" onclick="toggleMulti('type','專科中心',this)">專科中心</button>
-  <button class="toggle-pill" data-val="大學醫療中心" onclick="toggleMulti('type','大學醫療中心',this)">大學醫療中心</button>
+  <button class="toggle-pill" data-val="診所" onclick="toggleMulti('type','診所',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">診所</span><span class="tp-count">97</span></button>
+  <button class="toggle-pill" data-val="醫院" onclick="toggleMulti('type','醫院',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">醫院</span><span class="tp-count">76</span></button>
+  <button class="toggle-pill" data-val="專科中心" onclick="toggleMulti('type','專科中心',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">專科中心</span><span class="tp-count">6</span></button>
+  <button class="toggle-pill" data-val="大學醫療中心" onclick="toggleMulti('type','大學醫療中心',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">大學醫療中心</span><span class="tp-count">2</span></button>
 </div>
       </div>
     </div>
@@ -232,9 +241,9 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
       </button>
       <div class="filter-body">
         <div class="toggle-group" id="nature-toggles">
-  <button class="toggle-pill" data-val="私營" onclick="toggleMulti('nature','私營',this)">私營</button>
-  <button class="toggle-pill" data-val="非牟利" onclick="toggleMulti('nature','非牟利',this)">非牟利</button>
-  <button class="toggle-pill" data-val="大學" onclick="toggleMulti('nature','大學',this)">大學</button>
+  <button class="toggle-pill" data-val="私營" onclick="toggleMulti('nature','私營',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">私營</span><span class="tp-count">162</span></button>
+  <button class="toggle-pill" data-val="非牟利" onclick="toggleMulti('nature','非牟利',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">非牟利</span><span class="tp-count">9</span></button>
+  <button class="toggle-pill" data-val="大學" onclick="toggleMulti('nature','大學',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">大學</span><span class="tp-count">2</span></button>
 </div>
       </div>
     </div>
@@ -245,9 +254,9 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
       </button>
       <div class="filter-body">
         <div class="toggle-group" id="animal-toggles">
-  <button class="toggle-pill" data-val="貓貓 🐈‍⬛" onclick="toggleMulti('animal','貓貓 🐈‍⬛',this)">貓貓 🐈‍⬛</button>
-  <button class="toggle-pill" data-val="狗狗 🐕" onclick="toggleMulti('animal','狗狗 🐕',this)">狗狗 🐕</button>
-  <button class="toggle-pill" data-val="異寵動物🦎" onclick="toggleMulti('animal','異寵動物🦎',this)">異寵動物🦎</button>
+  <button class="toggle-pill" data-val="貓貓 🐈‍⬛" onclick="toggleMulti('animal','貓貓 🐈‍⬛',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">貓貓 🐈‍⬛</span><span class="tp-count">171</span></button>
+  <button class="toggle-pill" data-val="狗狗 🐕" onclick="toggleMulti('animal','狗狗 🐕',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">狗狗 🐕</span><span class="tp-count">169</span></button>
+  <button class="toggle-pill" data-val="異寵動物🦎" onclick="toggleMulti('animal','異寵動物🦎',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">異寵動物🦎</span><span class="tp-count">13</span></button>
 </div>
       </div>
     </div>
@@ -258,23 +267,23 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
       </button>
       <div class="filter-body">
         <div class="toggle-group" id="service-toggles">
-  <button class="toggle-pill" data-val="一般診症" onclick="toggleMulti('service','一般診症',this)">一般診症</button>
-  <button class="toggle-pill" data-val="外科手術" onclick="toggleMulti('service','外科手術',this)">外科手術</button>
-  <button class="toggle-pill" data-val="住院" onclick="toggleMulti('service','住院',this)">住院</button>
-  <button class="toggle-pill" data-val="急症" onclick="toggleMulti('service','急症',this)">急症</button>
-  <button class="toggle-pill" data-val="牙科" onclick="toggleMulti('service','牙科',this)">牙科</button>
-  <button class="toggle-pill" data-val="腫瘤科" onclick="toggleMulti('service','腫瘤科',this)">腫瘤科</button>
-  <button class="toggle-pill" data-val="專科" onclick="toggleMulti('service','專科',this)">專科</button>
-  <button class="toggle-pill" data-val="針灸" onclick="toggleMulti('service','針灸',this)">針灸</button>
-  <button class="toggle-pill" data-val="中獸醫" onclick="toggleMulti('service','中獸醫',this)">中獸醫</button>
-  <button class="toggle-pill" data-val="異寵" onclick="toggleMulti('service','異寵',this)">異寵</button>
-  <button class="toggle-pill" data-val="水療" onclick="toggleMulti('service','水療',this)">水療</button>
-  <button class="toggle-pill" data-val="超聲波" onclick="toggleMulti('service','超聲波',this)">超聲波</button>
-  <button class="toggle-pill" data-val="X-ray" onclick="toggleMulti('service','X-ray',this)">X-ray</button>
-  <button class="toggle-pill" data-val="CT掃描" onclick="toggleMulti('service','CT掃描',this)">CT掃描</button>
-  <button class="toggle-pill" data-val="內視鏡" onclick="toggleMulti('service','內視鏡',this)">內視鏡</button>
-  <button class="toggle-pill" data-val="心臟科" onclick="toggleMulti('service','心臟科',this)">心臟科</button>
-  <button class="toggle-pill" data-val="24小時" onclick="toggleMulti('service','24小時',this)">24小時</button>
+  <button class="toggle-pill" data-val="一般診症" onclick="toggleMulti('service','一般診症',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">一般診症</span><span class="tp-count">115</span></button>
+  <button class="toggle-pill" data-val="外科手術" onclick="toggleMulti('service','外科手術',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">外科手術</span><span class="tp-count">28</span></button>
+  <button class="toggle-pill" data-val="住院" onclick="toggleMulti('service','住院',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">住院</span><span class="tp-count">19</span></button>
+  <button class="toggle-pill" data-val="急症" onclick="toggleMulti('service','急症',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">急症</span><span class="tp-count">18</span></button>
+  <button class="toggle-pill" data-val="牙科" onclick="toggleMulti('service','牙科',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">牙科</span><span class="tp-count">6</span></button>
+  <button class="toggle-pill" data-val="腫瘤科" onclick="toggleMulti('service','腫瘤科',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">腫瘤科</span><span class="tp-count">5</span></button>
+  <button class="toggle-pill" data-val="專科" onclick="toggleMulti('service','專科',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">專科</span><span class="tp-count">5</span></button>
+  <button class="toggle-pill" data-val="針灸" onclick="toggleMulti('service','針灸',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">針灸</span><span class="tp-count">4</span></button>
+  <button class="toggle-pill" data-val="中獸醫" onclick="toggleMulti('service','中獸醫',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">中獸醫</span><span class="tp-count">2</span></button>
+  <button class="toggle-pill" data-val="異寵" onclick="toggleMulti('service','異寵',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">異寵</span><span class="tp-count">1</span></button>
+  <button class="toggle-pill" data-val="水療" onclick="toggleMulti('service','水療',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">水療</span><span class="tp-count">1</span></button>
+  <button class="toggle-pill" data-val="超聲波" onclick="toggleMulti('service','超聲波',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">超聲波</span><span class="tp-count">15</span></button>
+  <button class="toggle-pill" data-val="X-ray" onclick="toggleMulti('service','X-ray',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">X-ray</span><span class="tp-count">16</span></button>
+  <button class="toggle-pill" data-val="CT掃描" onclick="toggleMulti('service','CT掃描',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">CT掃描</span><span class="tp-count">0</span></button>
+  <button class="toggle-pill" data-val="內視鏡" onclick="toggleMulti('service','內視鏡',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">內視鏡</span><span class="tp-count">3</span></button>
+  <button class="toggle-pill" data-val="心臟科" onclick="toggleMulti('service','心臟科',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">心臟科</span><span class="tp-count">2</span></button>
+  <button class="toggle-pill" data-val="24小時" onclick="toggleMulti('service','24小時',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">24小時</span><span class="tp-count">1</span></button>
 </div>
       </div>
     </div>
@@ -326,8 +335,7 @@ var subsByRegion = {"港島":["灣仔","天后","跑馬地","筲箕灣","上環"
     rRow.className = 'dt-region-row';
     rRow.innerHTML =
       '<svg class="dt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'+
-      '<span class="dt-region-label">'+region+'</span>'+
-      '<span class="dt-count">'+rCount+'</span>';
+      '<span class="dt-region-label">'+region+' <span class="dt-inline-count">('+rCount+')</span></span>';
     rRow.addEventListener('click', function(e){
       // toggle open/close of subs
       regionDiv.classList.toggle('open');
@@ -358,8 +366,8 @@ var subsByRegion = {"港島":["灣仔","天后","跑馬地","筲箕灣","上環"
       var sRow = document.createElement('div');
       sRow.className = 'dt-sub-row';
       sRow.innerHTML =
-        '<span class="dt-sub-label">'+sub+'</span>'+
-        '<span class="dt-sub-count">'+sCount+'</span>';
+        '<span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'+
+        '<span class="dt-sub-label">'+sub+' <span class="dt-inline-count">('+sCount+')</span></span>';
       sRow.addEventListener('click', function(e){
         e.stopPropagation();
         if(activeSubDistrict===sub){
@@ -542,7 +550,7 @@ function renderClinics(list){
 
     // 電話 (multiple, each hyperlinked)
     if(c.phones&&c.phones.length){
-      var phLinks=c.phones.map(function(p){return'<a href="tel:'+p.replace(/s/g,'')+'">'+p+'</a>';}).join('；');
+      var phLinks=c.phones.map(function(p){var digits=p.replace(/D/g,'');var full=digits.length<=8?'+852'+digits:'+'+digits;return'<a href="tel:'+full+'">'+ p+'</a>';}).join('；');
       rows+='<tr><td>聯絡電話</td><td>'+phLinks+'</td></tr>';
     }else{
       rows+='<tr><td>聯絡電話</td><td>-</td></tr>';
@@ -551,8 +559,8 @@ function renderClinics(list){
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(c.whatsapps&&c.whatsapps.length){
       var waLinks=c.whatsapps.map(function(w){
-        var num=w.replace(/D/g,'');
-        var full=num.length<=8?'852'+num:num;
+        var digits=w.replace(/D/g,'');
+        var full=digits.length<=8?'852'+digits:digits;
         return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';
       }).join('；');
       rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
@@ -747,66 +755,66 @@ window.addEventListener('scroll',function(){
       <div id="drawer-sub-district-wrap" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:none;">
         <div class="filter-drawer-label" style="margin-bottom:8px;">分區</div>
         <div class="sub-group" data-region="港島" style="display:none">
-  <button class="toggle-pill" data-val="灣仔" onclick="toggleSingle('subDistrict','灣仔',this)">灣仔</button>
-  <button class="toggle-pill" data-val="天后" onclick="toggleSingle('subDistrict','天后',this)">天后</button>
-  <button class="toggle-pill" data-val="跑馬地" onclick="toggleSingle('subDistrict','跑馬地',this)">跑馬地</button>
-  <button class="toggle-pill" data-val="筲箕灣" onclick="toggleSingle('subDistrict','筲箕灣',this)">筲箕灣</button>
-  <button class="toggle-pill" data-val="上環" onclick="toggleSingle('subDistrict','上環',this)">上環</button>
-  <button class="toggle-pill" data-val="北角" onclick="toggleSingle('subDistrict','北角',this)">北角</button>
-  <button class="toggle-pill" data-val="西營盤" onclick="toggleSingle('subDistrict','西營盤',this)">西營盤</button>
-  <button class="toggle-pill" data-val="銅鑼灣" onclick="toggleSingle('subDistrict','銅鑼灣',this)">銅鑼灣</button>
-  <button class="toggle-pill" data-val="大坑" onclick="toggleSingle('subDistrict','大坑',this)">大坑</button>
-  <button class="toggle-pill" data-val="半山" onclick="toggleSingle('subDistrict','半山',this)">半山</button>
-  <button class="toggle-pill" data-val="西灣河" onclick="toggleSingle('subDistrict','西灣河',this)">西灣河</button>
-  <button class="toggle-pill" data-val="赤柱" onclick="toggleSingle('subDistrict','赤柱',this)">赤柱</button>
-  <button class="toggle-pill" data-val="淺水灣" onclick="toggleSingle('subDistrict','淺水灣',this)">淺水灣</button>
-  <button class="toggle-pill" data-val="堅尼地城" onclick="toggleSingle('subDistrict','堅尼地城',this)">堅尼地城</button>
-  <button class="toggle-pill" data-val="炮台山" onclick="toggleSingle('subDistrict','炮台山',this)">炮台山</button>
-  <button class="toggle-pill" data-val="柴灣" onclick="toggleSingle('subDistrict','柴灣',this)">柴灣</button>
-  <button class="toggle-pill" data-val="鰂魚涌" onclick="toggleSingle('subDistrict','鰂魚涌',this)">鰂魚涌</button>
-  <button class="toggle-pill" data-val="鴨脷洲" onclick="toggleSingle('subDistrict','鴨脷洲',this)">鴨脷洲</button>
+  <button class="toggle-pill" data-val="灣仔" onclick="toggleSingle('subDistrict','灣仔',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">灣仔</span></button>
+  <button class="toggle-pill" data-val="天后" onclick="toggleSingle('subDistrict','天后',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">天后</span></button>
+  <button class="toggle-pill" data-val="跑馬地" onclick="toggleSingle('subDistrict','跑馬地',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">跑馬地</span></button>
+  <button class="toggle-pill" data-val="筲箕灣" onclick="toggleSingle('subDistrict','筲箕灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">筲箕灣</span></button>
+  <button class="toggle-pill" data-val="上環" onclick="toggleSingle('subDistrict','上環',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">上環</span></button>
+  <button class="toggle-pill" data-val="北角" onclick="toggleSingle('subDistrict','北角',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">北角</span></button>
+  <button class="toggle-pill" data-val="西營盤" onclick="toggleSingle('subDistrict','西營盤',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">西營盤</span></button>
+  <button class="toggle-pill" data-val="銅鑼灣" onclick="toggleSingle('subDistrict','銅鑼灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">銅鑼灣</span></button>
+  <button class="toggle-pill" data-val="大坑" onclick="toggleSingle('subDistrict','大坑',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">大坑</span></button>
+  <button class="toggle-pill" data-val="半山" onclick="toggleSingle('subDistrict','半山',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">半山</span></button>
+  <button class="toggle-pill" data-val="西灣河" onclick="toggleSingle('subDistrict','西灣河',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">西灣河</span></button>
+  <button class="toggle-pill" data-val="赤柱" onclick="toggleSingle('subDistrict','赤柱',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">赤柱</span></button>
+  <button class="toggle-pill" data-val="淺水灣" onclick="toggleSingle('subDistrict','淺水灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">淺水灣</span></button>
+  <button class="toggle-pill" data-val="堅尼地城" onclick="toggleSingle('subDistrict','堅尼地城',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">堅尼地城</span></button>
+  <button class="toggle-pill" data-val="炮台山" onclick="toggleSingle('subDistrict','炮台山',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">炮台山</span></button>
+  <button class="toggle-pill" data-val="柴灣" onclick="toggleSingle('subDistrict','柴灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">柴灣</span></button>
+  <button class="toggle-pill" data-val="鰂魚涌" onclick="toggleSingle('subDistrict','鰂魚涌',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">鰂魚涌</span></button>
+  <button class="toggle-pill" data-val="鴨脷洲" onclick="toggleSingle('subDistrict','鴨脷洲',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">鴨脷洲</span></button>
 </div>
 <div class="sub-group" data-region="九龍" style="display:none">
-  <button class="toggle-pill" data-val="太子" onclick="toggleSingle('subDistrict','太子',this)">太子</button>
-  <button class="toggle-pill" data-val="旺角" onclick="toggleSingle('subDistrict','旺角',this)">旺角</button>
-  <button class="toggle-pill" data-val="何文田" onclick="toggleSingle('subDistrict','何文田',this)">何文田</button>
-  <button class="toggle-pill" data-val="深水埗" onclick="toggleSingle('subDistrict','深水埗',this)">深水埗</button>
-  <button class="toggle-pill" data-val="黃埔" onclick="toggleSingle('subDistrict','黃埔',this)">黃埔</button>
-  <button class="toggle-pill" data-val="尖沙咀" onclick="toggleSingle('subDistrict','尖沙咀',this)">尖沙咀</button>
-  <button class="toggle-pill" data-val="佐敦" onclick="toggleSingle('subDistrict','佐敦',this)">佐敦</button>
-  <button class="toggle-pill" data-val="油麻地" onclick="toggleSingle('subDistrict','油麻地',this)">油麻地</button>
-  <button class="toggle-pill" data-val="大角咀" onclick="toggleSingle('subDistrict','大角咀',this)">大角咀</button>
-  <button class="toggle-pill" data-val="葵涌" onclick="toggleSingle('subDistrict','葵涌',this)">葵涌</button>
-  <button class="toggle-pill" data-val="新蒲崗" onclick="toggleSingle('subDistrict','新蒲崗',this)">新蒲崗</button>
-  <button class="toggle-pill" data-val="美孚" onclick="toggleSingle('subDistrict','美孚',this)">美孚</button>
-  <button class="toggle-pill" data-val="黃大仙" onclick="toggleSingle('subDistrict','黃大仙',this)">黃大仙</button>
-  <button class="toggle-pill" data-val="觀塘" onclick="toggleSingle('subDistrict','觀塘',this)">觀塘</button>
-  <button class="toggle-pill" data-val="牛頭角" onclick="toggleSingle('subDistrict','牛頭角',this)">牛頭角</button>
-  <button class="toggle-pill" data-val="九龍城" onclick="toggleSingle('subDistrict','九龍城',this)">九龍城</button>
-  <button class="toggle-pill" data-val="紅磡" onclick="toggleSingle('subDistrict','紅磡',this)">紅磡</button>
-  <button class="toggle-pill" data-val="土瓜灣" onclick="toggleSingle('subDistrict','土瓜灣',this)">土瓜灣</button>
+  <button class="toggle-pill" data-val="太子" onclick="toggleSingle('subDistrict','太子',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">太子</span></button>
+  <button class="toggle-pill" data-val="旺角" onclick="toggleSingle('subDistrict','旺角',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">旺角</span></button>
+  <button class="toggle-pill" data-val="何文田" onclick="toggleSingle('subDistrict','何文田',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">何文田</span></button>
+  <button class="toggle-pill" data-val="深水埗" onclick="toggleSingle('subDistrict','深水埗',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">深水埗</span></button>
+  <button class="toggle-pill" data-val="黃埔" onclick="toggleSingle('subDistrict','黃埔',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">黃埔</span></button>
+  <button class="toggle-pill" data-val="尖沙咀" onclick="toggleSingle('subDistrict','尖沙咀',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">尖沙咀</span></button>
+  <button class="toggle-pill" data-val="佐敦" onclick="toggleSingle('subDistrict','佐敦',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">佐敦</span></button>
+  <button class="toggle-pill" data-val="油麻地" onclick="toggleSingle('subDistrict','油麻地',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">油麻地</span></button>
+  <button class="toggle-pill" data-val="大角咀" onclick="toggleSingle('subDistrict','大角咀',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">大角咀</span></button>
+  <button class="toggle-pill" data-val="葵涌" onclick="toggleSingle('subDistrict','葵涌',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">葵涌</span></button>
+  <button class="toggle-pill" data-val="新蒲崗" onclick="toggleSingle('subDistrict','新蒲崗',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">新蒲崗</span></button>
+  <button class="toggle-pill" data-val="美孚" onclick="toggleSingle('subDistrict','美孚',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">美孚</span></button>
+  <button class="toggle-pill" data-val="黃大仙" onclick="toggleSingle('subDistrict','黃大仙',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">黃大仙</span></button>
+  <button class="toggle-pill" data-val="觀塘" onclick="toggleSingle('subDistrict','觀塘',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">觀塘</span></button>
+  <button class="toggle-pill" data-val="牛頭角" onclick="toggleSingle('subDistrict','牛頭角',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">牛頭角</span></button>
+  <button class="toggle-pill" data-val="九龍城" onclick="toggleSingle('subDistrict','九龍城',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">九龍城</span></button>
+  <button class="toggle-pill" data-val="紅磡" onclick="toggleSingle('subDistrict','紅磡',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">紅磡</span></button>
+  <button class="toggle-pill" data-val="土瓜灣" onclick="toggleSingle('subDistrict','土瓜灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">土瓜灣</span></button>
 </div>
 <div class="sub-group" data-region="新界" style="display:none">
-  <button class="toggle-pill" data-val="將軍澳" onclick="toggleSingle('subDistrict','將軍澳',this)">將軍澳</button>
-  <button class="toggle-pill" data-val="大埔" onclick="toggleSingle('subDistrict','大埔',this)">大埔</button>
-  <button class="toggle-pill" data-val="沙田" onclick="toggleSingle('subDistrict','沙田',this)">沙田</button>
-  <button class="toggle-pill" data-val="屯門" onclick="toggleSingle('subDistrict','屯門',this)">屯門</button>
-  <button class="toggle-pill" data-val="大圍" onclick="toggleSingle('subDistrict','大圍',this)">大圍</button>
-  <button class="toggle-pill" data-val="元朗" onclick="toggleSingle('subDistrict','元朗',this)">元朗</button>
-  <button class="toggle-pill" data-val="東涌" onclick="toggleSingle('subDistrict','東涌',this)">東涌</button>
-  <button class="toggle-pill" data-val="荃灣" onclick="toggleSingle('subDistrict','荃灣',this)">荃灣</button>
-  <button class="toggle-pill" data-val="錦田" onclick="toggleSingle('subDistrict','錦田',this)">錦田</button>
-  <button class="toggle-pill" data-val="深井" onclick="toggleSingle('subDistrict','深井',this)">深井</button>
-  <button class="toggle-pill" data-val="洪水橋" onclick="toggleSingle('subDistrict','洪水橋',this)">洪水橋</button>
-  <button class="toggle-pill" data-val="粉嶺" onclick="toggleSingle('subDistrict','粉嶺',this)">粉嶺</button>
-  <button class="toggle-pill" data-val="上水" onclick="toggleSingle('subDistrict','上水',this)">上水</button>
-  <button class="toggle-pill" data-val="西貢" onclick="toggleSingle('subDistrict','西貢',this)">西貢</button>
+  <button class="toggle-pill" data-val="將軍澳" onclick="toggleSingle('subDistrict','將軍澳',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">將軍澳</span></button>
+  <button class="toggle-pill" data-val="大埔" onclick="toggleSingle('subDistrict','大埔',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">大埔</span></button>
+  <button class="toggle-pill" data-val="沙田" onclick="toggleSingle('subDistrict','沙田',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">沙田</span></button>
+  <button class="toggle-pill" data-val="屯門" onclick="toggleSingle('subDistrict','屯門',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">屯門</span></button>
+  <button class="toggle-pill" data-val="大圍" onclick="toggleSingle('subDistrict','大圍',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">大圍</span></button>
+  <button class="toggle-pill" data-val="元朗" onclick="toggleSingle('subDistrict','元朗',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">元朗</span></button>
+  <button class="toggle-pill" data-val="東涌" onclick="toggleSingle('subDistrict','東涌',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">東涌</span></button>
+  <button class="toggle-pill" data-val="荃灣" onclick="toggleSingle('subDistrict','荃灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">荃灣</span></button>
+  <button class="toggle-pill" data-val="錦田" onclick="toggleSingle('subDistrict','錦田',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">錦田</span></button>
+  <button class="toggle-pill" data-val="深井" onclick="toggleSingle('subDistrict','深井',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">深井</span></button>
+  <button class="toggle-pill" data-val="洪水橋" onclick="toggleSingle('subDistrict','洪水橋',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">洪水橋</span></button>
+  <button class="toggle-pill" data-val="粉嶺" onclick="toggleSingle('subDistrict','粉嶺',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">粉嶺</span></button>
+  <button class="toggle-pill" data-val="上水" onclick="toggleSingle('subDistrict','上水',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">上水</span></button>
+  <button class="toggle-pill" data-val="西貢" onclick="toggleSingle('subDistrict','西貢',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">西貢</span></button>
 </div>
 <div class="sub-group" data-region="離島" style="display:none">
-  <button class="toggle-pill" data-val="梅窩" onclick="toggleSingle('subDistrict','梅窩',this)">梅窩</button>
-  <button class="toggle-pill" data-val="馬灣" onclick="toggleSingle('subDistrict','馬灣',this)">馬灣</button>
-  <button class="toggle-pill" data-val="愉景灣" onclick="toggleSingle('subDistrict','愉景灣',this)">愉景灣</button>
-  <button class="toggle-pill" data-val="貝澳" onclick="toggleSingle('subDistrict','貝澳',this)">貝澳</button>
+  <button class="toggle-pill" data-val="梅窩" onclick="toggleSingle('subDistrict','梅窩',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">梅窩</span></button>
+  <button class="toggle-pill" data-val="馬灣" onclick="toggleSingle('subDistrict','馬灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">馬灣</span></button>
+  <button class="toggle-pill" data-val="愉景灣" onclick="toggleSingle('subDistrict','愉景灣',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">愉景灣</span></button>
+  <button class="toggle-pill" data-val="貝澳" onclick="toggleSingle('subDistrict','貝澳',this)"><span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="tp-label">貝澳</span></button>
 </div>
       </div>
     </div>
