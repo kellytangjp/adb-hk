@@ -36,31 +36,9 @@ function prop(page, name) {
 function parseNumbers(raw) {
   if (!raw) return [];
   return raw
-    .split(/[;；,，\n]/)        // split by ; ； , ， or newline
-    .map(s => s.replace(/[^\d+]/g, '').trim()) // keep digits and + only
-    .filter(s => s.length >= 4); // remove empty/junk
-}
-
-/* ── build tel: href (add +852 if 8-digit HK number) ── */
-function toTelHref(num) {
-  const digits = num.replace(/\D/g, '');
-  const full = digits.length <= 8 ? '852' + digits : digits;
-  return 'tel:+' + full;
-}
-
-/* ── build wa.me href (add 852 if 8-digit HK number) ── */
-function toWaHref(num) {
-  const digits = num.replace(/\D/g, '');
-  const full = digits.length <= 8 ? '852' + digits : digits;
-  return 'https://wa.me/' + full;
-}
-
-/* ── format display number (original spacing preserved or formatted) ── */
-function fmtNum(num) {
-  const digits = num.replace(/\D/g, '');
-  // HK 8-digit: format as XXXX XXXX
-  if (digits.length === 8) return digits.slice(0,4) + ' ' + digits.slice(4);
-  return num;
+    .split(/[;；,，\n]/)
+    .map(s => s.replace(/[^\d+]/g, ''))
+    .filter(s => s.length >= 4);
 }
 
 /* ── fetch schema (for dynamic filter options) ── */
@@ -529,7 +507,10 @@ function renderOrgs(list){
     // 電話 (multiple, each hyperlinked)
     if(o.phones&&o.phones.length){
       var phLinks=o.phones.map(function(p){
-        return'<a href="'+toTelHref(p)+'">'+fmtNum(p)+'</a>';
+        var d=p.replace(/\D/g,'');
+        var full=d.length<=8?'852'+d:d;
+        var display=d.length===8?d.slice(0,4)+' '+d.slice(4):p;
+        return'<a href="tel:+'+full+'">'+display+'</a>';
       }).join('；');
       rows+='<tr><td>電話</td><td>'+phLinks+'</td></tr>';
     }else{
@@ -539,7 +520,10 @@ function renderOrgs(list){
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(o.whatsapps&&o.whatsapps.length){
       var waLinks=o.whatsapps.map(function(w){
-        return'<a href="'+toWaHref(w)+'" target="_blank" rel="noopener">'+fmtNum(w)+'</a>';
+        var d=w.replace(/\D/g,'');
+        var full=d.length<=8?'852'+d:d;
+        var display=d.length===8?d.slice(0,4)+' '+d.slice(4):w;
+        return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+display+'</a>';
       }).join('；');
       rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
     }else{
