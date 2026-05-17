@@ -16,7 +16,7 @@
 
   const navHTML = `
 <nav id="adb-nav">
-  <a href="/adb-hk/" class="nav-logo">🐾 <span>ADBHK</span> 浪浪有家 | 領養不購買 | 香港動物資訊網</a>
+  <a href="/adb-hk/" class="nav-logo">浪浪有家 • ADBHK | 領養不購買 | 香港動物資訊網</a>
   <ul class="nav-links">
     ${NAV_LINKS.map(l => `
     <li><a href="${l.href}" ${isActive(l.href) ? 'class="active"' : ''}>${l.label}</a></li>`).join("")}

@@ -32,7 +32,7 @@
   const footerHTML = `
 <footer id="adb-footer">
   <div class="footer-inner">
-    <span>© ${year} ADB HK · 香港動物拯救機構資料庫</span>
+    <span>© ${year} 浪浪有家 • ADBHK | 領養不購買 | 香港動物資訊網 </span>
     <span>資料如有錯誤或更新，歡迎 <a href="mailto:info@adbhk.org">聯絡我們</a></span>
   </div>
 </footer>`;
