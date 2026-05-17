@@ -267,11 +267,38 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .empty-state h3{font-size:16px;font-weight:500;margin-bottom:6px;}
 .empty-state p{font-size:13px;color:var(--text-muted);}
 
-/* FOOTER */
-footer{border-top:1px solid var(--border);background:var(--white);padding:1.5rem 2rem;margin-top:3rem;}
-.footer-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--text-muted);}
-.footer-inner a{color:var(--coral);text-decoration:none;}
-.footer-inner a:hover{text-decoration:underline;}
+/* FLOATING BUTTONS */
+.float-btns{position:fixed;bottom:28px;left:0;right:0;z-index:300;display:flex;justify-content:space-between;padding:0 28px;pointer-events:none;}
+.float-filter-btn,.float-top-btn{pointer-events:all;display:flex;align-items:center;gap:8px;border-radius:50px;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;}
+.float-filter-btn{background:var(--coral);color:white;padding:12px 20px;border:none;box-shadow:0 4px 20px rgba(255,107,43,.4);}
+.float-filter-btn:hover{background:var(--coral-hover);transform:translateY(-2px);box-shadow:0 6px 24px rgba(255,107,43,.5);}
+.float-top-btn{background:var(--white);color:var(--text-secondary);padding:12px 16px;border:1px solid var(--border);box-shadow:0 4px 16px var(--shadow);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .25s,transform .25s,background .15s;}
+.float-top-btn.visible{opacity:1;transform:translateY(0);pointer-events:all;}
+.float-top-btn:hover{background:var(--bg-soft);transform:translateY(-2px);}
+.float-filter-btn svg,.float-top-btn svg{width:16px;height:16px;flex-shrink:0;}
+.float-filter-count{background:white;color:var(--coral);font-size:11px;font-weight:700;border-radius:10px;padding:1px 7px;display:none;}
+.float-filter-count.visible{display:inline-block;}
+
+/* FILTER DRAWER */
+.filter-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;opacity:0;transition:opacity .25s;}
+.filter-drawer-overlay.open{display:block;opacity:1;}
+.filter-drawer{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--white);border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.12);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:80vh;overflow-y:auto;}
+.filter-drawer.open{transform:translateY(0);}
+.filter-drawer-handle{display:flex;justify-content:center;padding:12px 0 0;}
+.filter-drawer-handle-bar{width:36px;height:4px;background:var(--border);border-radius:2px;}
+.filter-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem .75rem;border-bottom:1px solid var(--border);}
+.filter-drawer-title{font-size:15px;font-weight:600;color:var(--text-primary);}
+.filter-drawer-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg-soft);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .15s;}
+.filter-drawer-close:hover{background:var(--border);}
+.filter-drawer-body{padding:1rem 1.5rem;}
+.filter-drawer-section{margin-bottom:1.25rem;}
+.filter-drawer-section:last-child{margin-bottom:.5rem;}
+.filter-drawer-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
+.filter-drawer-footer{padding:1rem 1.5rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:10px;}
+.drawer-clear-btn{flex:1;height:44px;border:1px solid var(--border);border-radius:10px;background:var(--white);font-family:var(--font);font-size:14px;color:var(--text-secondary);cursor:pointer;transition:all .15s;}
+.drawer-clear-btn:hover{border-color:var(--coral);color:var(--coral);}
+.drawer-apply-btn{flex:2;height:44px;border:none;border-radius:10px;background:var(--coral);font-family:var(--font);font-size:14px;font-weight:500;color:white;cursor:pointer;transition:background .15s;}
+.drawer-apply-btn:hover{background:var(--coral-hover);}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -501,7 +528,119 @@ function renderOrgs(list){
 }
 
 filterOrgs();
+
+/* ── FLOATING FILTER DRAWER ── */
+function openFilterDrawer(){
+  syncDrawerToState();
+  document.getElementById('filterDrawer').classList.add('open');
+  document.getElementById('filterOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeFilterDrawer(){
+  document.getElementById('filterDrawer').classList.remove('open');
+  document.getElementById('filterOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function syncDrawerToState(){
+  document.querySelectorAll('#drawer-service-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeServices.indexOf(b.dataset.val)>=0);});
+  document.querySelectorAll('#drawer-animal-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeAnimals.indexOf(b.dataset.val)>=0);});
+  document.querySelectorAll('#drawer-type-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeType===b.dataset.val);});
+}
+function syncSidebarToState(){
+  document.querySelectorAll('#service-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeServices.indexOf(b.dataset.val)>=0);});
+  document.querySelectorAll('#animal-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeAnimals.indexOf(b.dataset.val)>=0);});
+  document.querySelectorAll('#type-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeType===b.dataset.val);});
+  updateBadge('service',activeServices.length);
+  updateBadge('animal',activeAnimals.length);
+  updateBadge('type',activeType?1:0);
+}
+function toggleMultiDrawer(dim,val,btn){
+  var arr=dim==='service'?activeServices:activeAnimals;
+  var idx=arr.indexOf(val);
+  if(idx>=0){arr.splice(idx,1);btn.classList.remove('active');}
+  else{arr.push(val);btn.classList.add('active');}
+  syncSidebarToState();updateFloatCount();filterOrgs();renderPills();
+}
+function toggleSingleDrawer(dim,val,btn){
+  if(activeType===val){activeType=null;btn.classList.remove('active');}
+  else{document.querySelectorAll('#drawer-type-toggles .toggle-pill').forEach(function(b){b.classList.remove('active');});activeType=val;btn.classList.add('active');}
+  syncSidebarToState();updateFloatCount();filterOrgs();renderPills();
+}
+function clearAllFilters(){
+  activeServices.length=0;activeAnimals.length=0;activeType=null;
+  document.querySelectorAll('.toggle-pill').forEach(function(b){b.classList.remove('active');});
+  updateBadge('service',0);updateBadge('animal',0);updateBadge('type',0);
+  updateFloatCount();filterOrgs();renderPills();
+}
+function updateFloatCount(){
+  var total=activeServices.length+activeAnimals.length+(activeType?1:0);
+  var el=document.getElementById('floatFilterCount');
+  el.textContent=total;
+  if(total>0)el.classList.add('visible');else el.classList.remove('visible');
+}
+
+/* ── GO TO TOP ── */
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
+window.addEventListener('scroll',function(){
+  var btn=document.getElementById('floatTopBtn');
+  if(!btn)return;
+  if(window.scrollY>300)btn.classList.add('visible');
+  else btn.classList.remove('visible');
+});
 </script>
+
+<script src="/adb-hk/footer.js"></script>
+
+<!-- FLOATING BUTTONS -->
+<div class="float-btns">
+  <button class="float-filter-btn" id="floatFilterBtn" onclick="openFilterDrawer()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+    篩選
+    <span class="float-filter-count" id="floatFilterCount"></span>
+  </button>
+  <button class="float-top-btn" id="floatTopBtn" onclick="scrollToTop()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+    頂部
+  </button>
+</div>
+
+<!-- FILTER DRAWER OVERLAY -->
+<div class="filter-drawer-overlay" id="filterOverlay" onclick="closeFilterDrawer()"></div>
+
+<!-- FILTER DRAWER -->
+<div class="filter-drawer" id="filterDrawer">
+  <div class="filter-drawer-handle"><div class="filter-drawer-handle-bar"></div></div>
+  <div class="filter-drawer-head">
+    <span class="filter-drawer-title">篩選機構</span>
+    <button class="filter-drawer-close" onclick="closeFilterDrawer()">×</button>
+  </div>
+  <div class="filter-drawer-body">
+    <div class="filter-drawer-section">
+      <div class="filter-drawer-label">服務類型</div>
+      <div class="toggle-group" id="drawer-service-toggles">
+        ${typeOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('service','${esc(o)}',this)">${esc(o)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="filter-drawer-section">
+      <div class="filter-drawer-label">動物種類</div>
+      <div class="toggle-group" id="drawer-animal-toggles">
+        ${animalOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('animal','${esc(o)}',this)">${esc(o)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="filter-drawer-section">
+      <div class="filter-drawer-label">類別</div>
+      <div class="toggle-group" id="drawer-type-toggles">
+        <button class="toggle-pill" data-val="非牟利機構" onclick="toggleSingleDrawer('type','非牟利機構',this)">非牟利機構</button>
+        <button class="toggle-pill" data-val="獨立義工" onclick="toggleSingleDrawer('type','獨立義工',this)">獨立義工</button>
+      </div>
+    </div>
+  </div>
+  <div class="filter-drawer-footer">
+    <button class="drawer-clear-btn" onclick="clearAllFilters()">清除全部</button>
+    <button class="drawer-apply-btn" onclick="closeFilterDrawer()">顯示結果</button>
+  </div>
+</div>
+
 </body>
 </html>`;
 }

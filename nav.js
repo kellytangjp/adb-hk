@@ -1,7 +1,9 @@
 /* ── ADB HK Shared Navigation ── */
 (function () {
   const NAV_LINKS = [
-    { label: "動物拯救資料庫", href: "/adb-hk/animal-rescue-organization-list/" },
+    { label: "動物拯救機構", href: "/adb-hk/animal-rescue-organization-list/" },
+	{ label: "動物醫院/診所", href: "/veterinary-hospital-clinic-list/" },
+	{ label: "獸醫資訊", href: "/vet-list" },
     { label: "緊急求助",   href: "/adb-hk/emergency/" },
     { label: "關於我們",   href: "/adb-hk/about/" },
   ];
@@ -14,7 +16,7 @@
 
   const navHTML = `
 <nav id="adb-nav">
-  <a href="/adb-hk/" class="nav-logo">🐾 <span>ADB HK</span> 動物拯救資料庫</a>
+  <a href="/adb-hk/" class="nav-logo">🐾 <span>ADBHK</span> 浪浪有家 | 領養不購買 | 香港動物資訊網</a>
   <ul class="nav-links">
     ${NAV_LINKS.map(l => `
     <li><a href="${l.href}" ${isActive(l.href) ? 'class="active"' : ''}>${l.label}</a></li>`).join("")}
