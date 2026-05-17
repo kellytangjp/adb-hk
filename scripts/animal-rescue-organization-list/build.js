@@ -32,6 +32,37 @@ function prop(page, name) {
   }
 }
 
+/* ── clean & split phone/whatsapp string into array ── */
+function parseNumbers(raw) {
+  if (!raw) return [];
+  return raw
+    .split(/[;；,，\n]/)        // split by ; ； , ， or newline
+    .map(s => s.replace(/[^\d+]/g, '').trim()) // keep digits and + only
+    .filter(s => s.length >= 4); // remove empty/junk
+}
+
+/* ── build tel: href (add +852 if 8-digit HK number) ── */
+function toTelHref(num) {
+  const digits = num.replace(/\D/g, '');
+  const full = digits.length <= 8 ? '852' + digits : digits;
+  return 'tel:+' + full;
+}
+
+/* ── build wa.me href (add 852 if 8-digit HK number) ── */
+function toWaHref(num) {
+  const digits = num.replace(/\D/g, '');
+  const full = digits.length <= 8 ? '852' + digits : digits;
+  return 'https://wa.me/' + full;
+}
+
+/* ── format display number (original spacing preserved or formatted) ── */
+function fmtNum(num) {
+  const digits = num.replace(/\D/g, '');
+  // HK 8-digit: format as XXXX XXXX
+  if (digits.length === 8) return digits.slice(0,4) + ' ' + digits.slice(4);
+  return num;
+}
+
 /* ── fetch schema (for dynamic filter options) ── */
 async function fetchSchema() {
   const db     = await notion.databases.retrieve({ database_id: DATABASE_ID });
@@ -79,17 +110,9 @@ function toOrg(page) {
   const category = prop(page, '類別') || '';
   const avatarColor = category === '獨立義工' ? 'green' : '';
 
-  // phones: split by ; or ； into array
-  const rawPhone = prop(page, '電話') || '';
-  const phones = rawPhone
-    ? rawPhone.split(/[;；]/).map(s => s.trim()).filter(Boolean)
-    : [];
-
-  // whatsapp: split same way
-  const rawWa = prop(page, 'WhatsApp') || '';
-  const whatsapps = rawWa
-    ? rawWa.split(/[;；]/).map(s => s.trim()).filter(Boolean)
-    : [];
+  // phones & whatsapp: parse into clean arrays
+  const phones    = parseNumbers(prop(page, '電話')    || '');
+  const whatsapps = parseNumbers(prop(page, 'WhatsApp') || '');
 
   // facebook / instagram stored as URLs in Notion
   const fbUrl = prop(page, 'facebook') || '';
@@ -506,9 +529,7 @@ function renderOrgs(list){
     // 電話 (multiple, each hyperlinked)
     if(o.phones&&o.phones.length){
       var phLinks=o.phones.map(function(p){
-        var num=p.replace(/\s/g,'');          // remove spaces
-        var full=num.length<=8?'852'+num:num; // add 852 if 8-digit HK number
-        return'<a href="tel:+'+full+'">'+p+'</a>';
+        return'<a href="'+toTelHref(p)+'">'+fmtNum(p)+'</a>';
       }).join('；');
       rows+='<tr><td>電話</td><td>'+phLinks+'</td></tr>';
     }else{
@@ -518,9 +539,7 @@ function renderOrgs(list){
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(o.whatsapps&&o.whatsapps.length){
       var waLinks=o.whatsapps.map(function(w){
-        var num=w.replace(/\s/g,'');          // remove spaces
-        var full=num.length<=8?'852'+num:num; // add 852 if 8-digit HK number
-        return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';
+        return'<a href="'+toWaHref(w)+'" target="_blank" rel="noopener">'+fmtNum(w)+'</a>';
       }).join('；');
       rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
     }else{
