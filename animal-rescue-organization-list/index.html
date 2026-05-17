@@ -373,7 +373,10 @@ function renderOrgs(list){
     // 電話 (multiple, each hyperlinked)
     if(o.phones&&o.phones.length){
       var phLinks=o.phones.map(function(p){
-        return'<a href="'+toTelHref(p)+'">'+fmtNum(p)+'</a>';
+        var d=p.replace(/D/g,'');
+        var full=d.length<=8?'852'+d:d;
+        var display=d.length===8?d.slice(0,4)+' '+d.slice(4):p;
+        return'<a href="tel:+'+full+'">'+display+'</a>';
       }).join('；');
       rows+='<tr><td>電話</td><td>'+phLinks+'</td></tr>';
     }else{
@@ -383,7 +386,10 @@ function renderOrgs(list){
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(o.whatsapps&&o.whatsapps.length){
       var waLinks=o.whatsapps.map(function(w){
-        return'<a href="'+toWaHref(w)+'" target="_blank" rel="noopener">'+fmtNum(w)+'</a>';
+        var d=w.replace(/D/g,'');
+        var full=d.length<=8?'852'+d:d;
+        var display=d.length===8?d.slice(0,4)+' '+d.slice(4):w;
+        return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+display+'</a>';
       }).join('；');
       rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
     }else{
