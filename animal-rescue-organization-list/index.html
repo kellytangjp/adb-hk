@@ -372,7 +372,11 @@ function renderOrgs(list){
 
     // 電話 (multiple, each hyperlinked)
     if(o.phones&&o.phones.length){
-      var phLinks=o.phones.map(function(p){return'<a href="tel:'+p.replace(/s/g,'')+'">'+p+'</a>';}).join('；');
+      var phLinks=o.phones.map(function(p){
+        var num=p.replace(/s/g,'');          // remove spaces
+        var full=num.length<=8?'852'+num:num; // add 852 if 8-digit HK number
+        return'<a href="tel:+'+full+'">'+p+'</a>';
+      }).join('；');
       rows+='<tr><td>電話</td><td>'+phLinks+'</td></tr>';
     }else{
       rows+='<tr><td>電話</td><td>-</td></tr>';
@@ -381,9 +385,8 @@ function renderOrgs(list){
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(o.whatsapps&&o.whatsapps.length){
       var waLinks=o.whatsapps.map(function(w){
-        var num=w.replace(/s/g,'');
-        // prepend 852 if no country code (i.e. 8-digit HK number)
-        var full=num.length<=8?'852'+num:num;
+        var num=w.replace(/s/g,'');          // remove spaces
+        var full=num.length<=8?'852'+num:num; // add 852 if 8-digit HK number
         return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';
       }).join('；');
       rows+='<tr><td>WhatsApp</td><td>'+waLinks+'</td></tr>';
