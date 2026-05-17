@@ -220,10 +220,15 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 
 
 /* MAIN */
-.main{max-width:1100px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:230px 1fr;gap:1.5rem;align-items:start;}
+.main{max-width:1100px;margin:0 auto;padding:1.5rem 2rem;display:grid;grid-template-columns:240px 1fr;gap:1.5rem;align-items:start;}
+/* desktop top-bar filter (hides sidebar on wider screens if desired - kept as sidebar) */
 
 /* SIDEBAR */
-.sidebar{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:sticky;top:76px;}
+.sidebar{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.sidebar-head{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;border-bottom:1px solid var(--border);background:var(--bg-soft);}
+.sidebar-head-title{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;}
+.sidebar-clear-btn{font-size:12px;color:var(--coral);background:none;border:none;cursor:pointer;font-family:var(--font);font-weight:500;padding:2px 0;}
+.sidebar-clear-btn:hover{text-decoration:underline;}
 .filter-group{border-bottom:1px solid var(--border);}
 .filter-group:last-child{border-bottom:none;}
 .filter-group-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;cursor:pointer;user-select:none;background:transparent;border:none;width:100%;font-family:var(--font);transition:background .15s;}
@@ -233,44 +238,49 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .filter-active-badge.visible{display:inline-block;}
 .filter-chevron{width:15px;height:15px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;}
 .filter-group.open .filter-chevron{transform:rotate(180deg);}
-.filter-body{display:none;padding:0 1rem 1rem;}
+.filter-body{display:none;padding:0 .5rem .75rem;}
 .filter-group.open .filter-body{display:block;}
+/* checkbox list items */
 .toggle-group{display:flex;flex-direction:column;gap:0;}
-.toggle-pill{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;text-align:left;width:100%;}
+.toggle-pill{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:13px;color:var(--text-secondary);cursor:pointer;transition:all .15s;text-align:left;width:100%;}
 .toggle-pill:hover{background:var(--bg-soft);color:var(--text-primary);}
-.toggle-pill.active{background:var(--coral-light);color:var(--coral);font-weight:500;}
+.toggle-pill.active{color:var(--coral);font-weight:500;}
 .tp-check{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .toggle-pill.active .tp-check{background:var(--coral);border-color:var(--coral);}
 .tp-check-icon{display:none;width:9px;height:9px;}
 .toggle-pill.active .tp-check-icon{display:block;}
-.tp-label{flex:1;}
-.tp-count{font-size:11px;color:var(--text-muted);background:var(--bg-soft);border-radius:10px;padding:1px 6px;border:1px solid var(--border);flex-shrink:0;}
-.toggle-pill.active .tp-count{background:var(--coral-light);border-color:rgba(255,107,43,.2);color:var(--coral);}
-.sub-group{margin-top:0;padding-left:12px;}
-.sub-group .toggle-pill{font-size:12px;padding:5px 10px;}
-
-.district-tree{display:flex;flex-direction:column;gap:2px;}
-.dt-region{margin-bottom:4px;}
-.dt-region-row{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;cursor:pointer;user-select:none;transition:background .15s;}
-.dt-region-row:hover{background:var(--bg-soft);}
-.dt-region-row.active{background:var(--coral-light);}
+.tp-label{flex:1;line-height:1.3;}
+.tp-count{font-size:11px;color:var(--text-muted);flex-shrink:0;}
+.toggle-pill.active .tp-count{color:var(--coral);}
+/* district tree */
+.district-tree{display:flex;flex-direction:column;gap:1px;}
+.dt-region{margin-bottom:2px;}
+.dt-region-header{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;user-select:none;transition:background .15s;}
+.dt-region-header:hover{background:var(--bg-soft);}
+.dt-region-header.active{color:var(--coral);}
+.dt-chk{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.dt-region-header.active .dt-chk{background:var(--coral);border-color:var(--coral);}
+.dt-chk svg{display:none;width:9px;height:9px;}
+.dt-region-header.active .dt-chk svg{display:block;}
 .dt-region-label{flex:1;font-size:13px;font-weight:500;color:var(--text-primary);}
-.dt-region-row.active .dt-region-label{color:var(--coral);}
-.dt-count{font-size:11px;color:var(--text-muted);background:var(--bg-soft);border-radius:10px;padding:1px 7px;border:1px solid var(--border);}
-.dt-region-row.active .dt-count{background:var(--coral-light);border-color:rgba(255,107,43,.2);color:var(--coral);}
-.dt-chevron{width:13px;height:13px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;}
-.dt-region.open .dt-chevron{transform:rotate(180deg);}
-.dt-subs{display:none;padding-left:12px;margin-top:2px;display:flex;flex-direction:column;gap:1px;}
-.dt-region.open .dt-subs{display:flex;}
-.dt-sub-row{display:flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;cursor:pointer;user-select:none;transition:background .15s;}
+.dt-region-header.active .dt-region-label{color:var(--coral);}
+.dt-count{font-size:11px;color:var(--text-muted);}
+.dt-region-header.active .dt-count{color:var(--coral);}
+.dt-arrow{width:13px;height:13px;color:var(--text-muted);transition:transform .2s;flex-shrink:0;}
+.dt-region.open .dt-arrow{transform:rotate(180deg);}
+.dt-subs{display:none;padding-left:20px;margin-top:1px;max-height:200px;overflow-y:auto;}
+.dt-region.open .dt-subs{display:flex;flex-direction:column;gap:0;}
+.dt-sub-row{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:5px;cursor:pointer;user-select:none;transition:background .15s;}
 .dt-sub-row:hover{background:var(--bg-soft);}
-.dt-sub-row.active{background:var(--coral-light);}
+.dt-sub-row.active{color:var(--coral);}
+.dt-sub-chk{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.dt-sub-row.active .dt-sub-chk{background:var(--coral);border-color:var(--coral);}
+.dt-sub-chk svg{display:none;width:8px;height:8px;}
+.dt-sub-row.active .dt-sub-chk svg{display:block;}
 .dt-sub-label{flex:1;font-size:12px;color:var(--text-secondary);}
 .dt-sub-row.active .dt-sub-label{color:var(--coral);font-weight:500;}
-.dt-inline-count{font-size:11px;color:var(--text-muted);font-weight:400;}
-.dt-region-row.active .dt-inline-count,.dt-sub-row.active .dt-inline-count{color:var(--coral);}
-.dt-sub-row .tp-check{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--border);background:var(--white);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.dt-sub-row.active .tp-check{background:var(--coral);border-color:var(--coral);}
+.dt-sub-count{font-size:11px;color:var(--text-muted);}
+.dt-sub-row.active .dt-sub-count{color:var(--coral);}
 
 /* CONTENT */
 .content{min-width:0;}
@@ -400,6 +410,10 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 
 <div class="main">
   <aside class="sidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-head-title">篩選</span>
+      <button class="sidebar-clear-btn" id="sidebarClearBtn" onclick="clearAllFilters()" style="display:none">清除全部</button>
+    </div>
     <div class="filter-group" id="grp-district">
       <button class="filter-group-header" onclick="toggleGroup('grp-district')">
         <span class="filter-group-title">地區 / 分區<span class="filter-active-badge" id="badge-district"></span></span>
@@ -469,54 +483,58 @@ var subsByRegion = ${JSON.stringify(subsByRegion)};
 
 /* ── build district tree with counts ── */
 (function buildDistrictTree(){
-  var subsByRegion = ${JSON.stringify(subsByRegion)};
+  var sbr = subsByRegion;
   var tree = document.getElementById('district-tree');
   if(!tree) return;
 
-  // count per district and subDistrict
-  var distCount = {};
-  var subCount = {};
+  var distCount = {}, subCount = {};
   clinics.forEach(function(c){
-    if(c.district){ distCount[c.district]=(distCount[c.district]||0)+1; }
-    if(c.subDistrict){ subCount[c.subDistrict]=(subCount[c.subDistrict]||0)+1; }
+    if(c.district)    distCount[c.district]   = (distCount[c.district]||0)+1;
+    if(c.subDistrict) subCount[c.subDistrict] = (subCount[c.subDistrict]||0)+1;
   });
 
-  Object.keys(subsByRegion).forEach(function(region){
-    var subs = subsByRegion[region];
+  var CHK_SVG = '<svg viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  Object.keys(sbr).forEach(function(region){
+    var subs   = sbr[region];
     var rCount = distCount[region]||0;
 
     var regionDiv = document.createElement('div');
     regionDiv.className = 'dt-region';
 
-    // region row
-    var rRow = document.createElement('div');
-    rRow.className = 'dt-region-row';
-    rRow.innerHTML =
-      '<svg class="dt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'+
-      '<span class="dt-region-label">'+region+' <span class="dt-inline-count">('+rCount+')</span></span>';
-    rRow.addEventListener('click', function(e){
-      // toggle open/close of subs
-      regionDiv.classList.toggle('open');
-      // if already active district = this, deselect; else select
-      if(activeDistrict===region){
-        activeDistrict=null; activeSubDistrict=null;
-        rRow.classList.remove('active');
+    /* ── region header row (checkbox + label + count + arrow) ── */
+    var rHdr = document.createElement('div');
+    rHdr.className = 'dt-region-header';
+    rHdr.innerHTML =
+      '<span class="dt-chk">'+CHK_SVG+'</span>'+
+      '<span class="dt-region-label">'+region+'</span>'+
+      '<span class="dt-count">('+rCount+')</span>'+
+      '<svg class="dt-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>';
+
+    rHdr.addEventListener('click', function(e){
+      var wasActive = activeDistrict === region;
+      /* deselect previous */
+      document.querySelectorAll('.dt-region-header').forEach(function(r){r.classList.remove('active');});
+      document.querySelectorAll('.dt-sub-row').forEach(function(r){r.classList.remove('active');});
+      if(wasActive){
+        /* toggle off — collapse */
+        activeDistrict = null; activeSubDistrict = null;
+        regionDiv.classList.remove('open');
         updateBadge('district',0);
       } else {
-        // deactivate previous
-        document.querySelectorAll('.dt-region-row').forEach(function(r){r.classList.remove('active');});
-        document.querySelectorAll('.dt-sub-row').forEach(function(r){r.classList.remove('active');});
-        activeDistrict=region; activeSubDistrict=null;
-        rRow.classList.add('active');
-        updateBadge('district',1);
-        // open this region
+        /* select + expand */
+        activeDistrict = region; activeSubDistrict = null;
+        rHdr.classList.add('active');
+        /* collapse all, open this */
+        document.querySelectorAll('.dt-region').forEach(function(d){d.classList.remove('open');});
         regionDiv.classList.add('open');
+        updateBadge('district',1);
       }
       syncDrawerToState(); updateFloatCount(); filterClinics(); renderPills();
     });
-    regionDiv.appendChild(rRow);
+    regionDiv.appendChild(rHdr);
 
-    // sub rows
+    /* ── sub rows with scrollable container ── */
     var subsDiv = document.createElement('div');
     subsDiv.className = 'dt-subs';
     subs.forEach(function(sub){
@@ -524,18 +542,18 @@ var subsByRegion = ${JSON.stringify(subsByRegion)};
       var sRow = document.createElement('div');
       sRow.className = 'dt-sub-row';
       sRow.innerHTML =
-        '<span class="tp-check"><svg class="tp-check-icon" viewBox="0 0 10 8" fill="none"><polyline points="1,4 4,7 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'+
-        '<span class="dt-sub-label">'+sub+' <span class="dt-inline-count">('+sCount+')</span></span>';
+        '<span class="dt-sub-chk">'+CHK_SVG+'</span>'+
+        '<span class="dt-sub-label">'+sub+'</span>'+
+        '<span class="dt-sub-count">('+sCount+')</span>';
       sRow.addEventListener('click', function(e){
         e.stopPropagation();
         if(activeSubDistrict===sub){
           activeSubDistrict=null; sRow.classList.remove('active');
         } else {
           document.querySelectorAll('.dt-sub-row').forEach(function(r){r.classList.remove('active');});
-          // also ensure parent district is selected
           if(activeDistrict!==region){
-            document.querySelectorAll('.dt-region-row').forEach(function(r){r.classList.remove('active');});
-            activeDistrict=region; rRow.classList.add('active');
+            document.querySelectorAll('.dt-region-header').forEach(function(r){r.classList.remove('active');});
+            activeDistrict=region; rHdr.classList.add('active');
             updateBadge('district',1);
           }
           activeSubDistrict=sub; sRow.classList.add('active');
@@ -638,16 +656,13 @@ function renderPills(){
   var c=document.getElementById('active-pills');c.innerHTML='';
   if(activeDistrict){c.appendChild(makePill(activeDistrict,function(){
     activeDistrict=null;activeSubDistrict=null;
-    document.querySelectorAll('#district-toggles .toggle-pill').forEach(function(b){b.classList.remove('active');});
-    document.querySelectorAll('.toggle-pill[data-val]').forEach(function(b){if(b.classList.contains('sub-pill'))b.classList.remove('active');});
-    document.getElementById('sub-district-wrap').style.display='none';
-    document.querySelectorAll('.sub-group').forEach(function(g){g.style.display='none';});
+    document.querySelectorAll('.dt-region-header,.dt-sub-row').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.dt-region').forEach(function(d){d.classList.remove('open');});
     updateBadge('district',0);filterClinics();renderPills();
   }));}
   if(activeSubDistrict){c.appendChild(makePill(activeSubDistrict,function(){
     activeSubDistrict=null;
-    document.querySelectorAll('.sub-pill').forEach(function(b){b.classList.remove('active');});
-    document.querySelectorAll('#drawer-sub-district-wrap .toggle-pill').forEach(function(b){b.classList.remove('active');});
+    document.querySelectorAll('.dt-sub-row').forEach(function(b){b.classList.remove('active');});
     filterClinics();renderPills();
   }));}
   activeTypes.forEach(function(v){c.appendChild(makePill(v,function(){
@@ -708,7 +723,7 @@ function renderClinics(list){
 
     // 電話 (multiple, each hyperlinked)
     if(c.phones&&c.phones.length){
-      var phLinks=c.phones.map(function(p){var digits=p.replace(/\D/g,'');var full=digits.length<=8?'+852'+digits:'+'+digits;return'<a href="tel:'+full+'">'+ p+'</a>';}).join('；');
+      var phLinks=c.phones.map(function(p){var d=p.replace(/[^0-9]/g,'');var href=d.length<=8?'+852'+d:'+'+d;return'<a href="tel:'+href+'">'+p+'</a>';}).join(' · ');
       rows+='<tr><td>聯絡電話</td><td>'+phLinks+'</td></tr>';
     }else{
       rows+='<tr><td>聯絡電話</td><td>-</td></tr>';
@@ -716,7 +731,7 @@ function renderClinics(list){
 
     // WhatsApp (multiple, each hyperlinked to wa.me)
     if(c.whatsapps&&c.whatsapps.length){
-      var waLinks=c.whatsapps.map(function(w){
+      var waLinks=c.whatsapps.map(function(w){var d=w.replace(/[^0-9]/g,'');var full=d.length<=8?'852'+d:d;return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';}).join(' · ');
         var digits=w.replace(/\D/g,'');
         var full=digits.length<=8?'852'+digits:digits;
         return'<a href="https://wa.me/'+full+'" target="_blank" rel="noopener">'+w+'</a>';
@@ -778,7 +793,7 @@ function closeFilterDrawer(){
   document.body.style.overflow='';
 }
 function syncDrawerToState(){
-  document.querySelectorAll('#drawer-district-toggles .toggle-pill').forEach(function(b){b.classList.toggle('active',activeDistrict===b.dataset.val);});
+  /* district tree sidebar synced via buildDistrictTree active classes */
   // show/hide sub-district in drawer
   var dWrap=document.getElementById('drawer-sub-district-wrap');
   if(activeDistrict){
@@ -856,6 +871,8 @@ function clearAllFilters(){
   activeDistrict=null;activeSubDistrict=null;
   activeTypes.length=0;activeNature.length=0;activeAnimals.length=0;activeServices.length=0;
   document.querySelectorAll('.toggle-pill').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.dt-region-header,.dt-sub-row').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.dt-region').forEach(function(d){d.classList.remove('open');});
   document.getElementById('sub-district-wrap').style.display='none';
   document.getElementById('drawer-sub-district-wrap').style.display='none';
   document.querySelectorAll('.sub-group').forEach(function(g){g.style.display='none';});
@@ -867,6 +884,8 @@ function updateFloatCount(){
   var el=document.getElementById('floatFilterCount');
   el.textContent=total;
   if(total>0)el.classList.add('visible');else el.classList.remove('visible');
+  var sb=document.getElementById('sidebarClearBtn');
+  if(sb)sb.style.display=total>0?'':'none';
 }
 
 /* ── GO TO TOP ── */
