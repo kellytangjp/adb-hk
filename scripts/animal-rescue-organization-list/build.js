@@ -385,13 +385,6 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
   </div>
 </div>
 
-<footer>
-  <div class="footer-inner">
-    <span>© ${new Date().getFullYear()} ADB HK · 香港動物拯救機構資料庫</span>
-    <span>資料如有錯誤或更新，歡迎 <a href="mailto:info@adbhk.org">聯絡我們</a></span>
-  </div>
-</footer>
-
 <script>
 var orgs = ${orgsJson};
 
