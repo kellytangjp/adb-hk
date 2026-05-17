@@ -24,8 +24,8 @@ jobs:
 
       - name: Fetch Notion data & build clinic page
         env:
-          NOTION_TOKEN: ${{ secrets.CLINIC_NOTION_TOKEN }}
-          NOTION_DATABASE_ID: ${{ secrets.CLINIC_NOTION_DATABASE_ID }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN_CLINIC }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID_CLINIC }}
         run: node scripts/build-clinic.js
 
       - name: Commit & push if changed
