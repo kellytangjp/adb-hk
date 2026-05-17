@@ -19,54 +19,7 @@
 }
 body { font-family: var(--font); background: var(--bg-soft); color: var(--text-primary); min-height: 100vh; }
 
-/* ── NAV ── */
-nav {
-  background: var(--white); border-bottom: 1px solid var(--border);
-  padding: 0 2rem; height: 60px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 200;
-}
-.nav-logo {
-  font-size: 15px; font-weight: 600; color: var(--text-primary);
-  text-decoration: none; display: flex; align-items: center; gap: 8px;
-}
-.nav-logo span { color: var(--coral); }
-.nav-links { display: flex; gap: 2rem; list-style: none; }
-.nav-links a { font-size: 14px; color: var(--text-secondary); text-decoration: none; font-weight: 400; transition: color 0.2s; }
-.nav-links a:hover, .nav-links a.active { color: var(--coral); }
-.nav-links a.active { font-weight: 500; }
-
-/* hamburger */
-.hamburger {
-  display: none; flex-direction: column; justify-content: center; gap: 5px;
-  width: 36px; height: 36px; background: none; border: none; cursor: pointer; padding: 4px;
-}
-.hamburger span {
-  display: block; height: 2px; background: var(--text-primary); border-radius: 2px;
-  transition: all 0.25s;
-}
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-.mobile-menu {
-  display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
-  background: var(--white); z-index: 190; flex-direction: column;
-  padding: 1.5rem 2rem; gap: 0; border-top: 1px solid var(--border);
-}
-.mobile-menu.open { display: flex; }
-.mobile-menu a {
-  font-size: 16px; color: var(--text-secondary); text-decoration: none;
-  padding: 1rem 0; border-bottom: 1px solid var(--border); font-weight: 400;
-  transition: color 0.2s;
-}
-.mobile-menu a:hover, .mobile-menu a.active { color: var(--coral); }
-.mobile-menu a.active { font-weight: 500; }
-
-@media (max-width: 680px) {
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-}
+/* ── NAV (injected by nav.js) ── */
 
 /* ── PAGE HEADER ── */
 .page-header { background: var(--white); border-bottom: 1px solid var(--border); padding: 2.5rem 2rem 2rem; }
@@ -235,32 +188,14 @@ footer { border-top: 1px solid var(--border); background: var(--white); padding:
   .page-header { padding: 1.5rem 1rem 1rem; }
   .scorecard-num { font-size: 28px; }
   .update-note { display: none; }
-  nav { padding: 0 1rem; }
+  #adb-nav { padding: 0 1rem; }
   .detail-table td:first-child { width: 72px; }
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="/" class="nav-logo">🐾 <span>ADB HK</span> 動物拯救資料庫</a>
-  <ul class="nav-links">
-    <li><a href="/animal-rescue-organization" class="active">機構資料庫</a></li>
-    <li><a href="#">緊急求助</a></li>
-    <li><a href="#">關於我們</a></li>
-  </ul>
-  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="選單">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobile-menu">
-  <a href="/animal-rescue-organization" class="active">機構資料庫</a>
-  <a href="#">緊急求助</a>
-  <a href="#">關於我們</a>
-</div>
+<script src="/adb-hk/nav.js"></script>
 
 <!-- PAGE HEADER -->
 <div class="page-header">
@@ -465,14 +400,6 @@ let activeServices = new Set();
 let activeAnimals  = new Set();
 let activeType     = null;
 
-/* ── hamburger ── */
-function toggleMenu() {
-  const hb = document.getElementById("hamburger");
-  const mm = document.getElementById("mobile-menu");
-  hb.classList.toggle("open");
-  mm.classList.toggle("open");
-}
-
 /* ── filter groups ── */
 function toggleGroup(id) { document.getElementById(id).classList.toggle("open"); }
 
@@ -663,12 +590,5 @@ function updateStats() {
 updateStats();
 renderCards();
 </script>
-
-<!-- 首頁 index.html -->
-<script src="/adb-hk/nav.js"></script>
-
-<!-- animal-rescue-organization-list/index.html -->
-<script src="/adb-hk/nav.js"></script>
-
 </body>
 </html>
