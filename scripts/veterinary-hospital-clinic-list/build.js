@@ -111,6 +111,7 @@ function toClinic(page) {
     hours:     prop(page, '營業時間') || '',
     verified:  prop(page, '已核實') || false,
     afcdList:  prop(page, '漁護署名單') || false,
+    status:    prop(page, '狀態') || '',
     icon,
     avatarColor,
   };
@@ -317,6 +318,9 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .badge-sage{background:var(--sage-light);color:var(--sage-deep);}
 .badge-gray{background:var(--bg-soft);color:var(--text-secondary);border:1px solid var(--border);}
 .badge-verified{background:#eef6ee;color:#3a7a3a;}
+.badge-closed{background:#F3F4F6;color:#9CA3AF;border:1px solid #E5E7EB;}
+.org-card.closed .org-avatar{opacity:.5;}
+.org-card.closed .org-name{color:var(--text-muted);}
 .card-chevron{width:16px;height:16px;color:var(--text-muted);transition:transform .25s;flex-shrink:0;}
 .org-card.expanded .card-chevron{transform:rotate(180deg);}
 
@@ -810,11 +814,14 @@ function renderClinics(list){
     if(c.instagram)socials+='<a class="social-btn ig" href="'+c.instagram+'" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</a>';
     rows+='<tr><td>社交媒體</td><td>'+(socials?'<div class="social-btns">'+socials+'</div>':'-')+'</td></tr>';
 
-    return '<div class="org-card" id="card-'+i+'">'+
+    var isClosed=c.status==='已結業';
+    var closedBadge=isClosed?'<span class="badge badge-closed">已結業</span> ':'';
+    return '<div class="org-card'+(isClosed?' closed':'')+'" id="card-'+i+'">'+
       '<div class="org-card-header" onclick="toggleCard('+i+')">'+
         '<div class="org-avatar '+c.avatarColor+'">'+c.icon+'</div>'+
         '<div class="org-header-info">'+
-          '<div class="org-name">'+c.nameCN+(c.nameEN?' <span style="font-size:12px;color:var(--text-muted);font-weight:400;">'+c.nameEN+'</span>':'')+'</div>'+
+          '<div class="org-name">'+closedBadge+c.nameCN+(c.nameEN?' <span style="font-size:12px;color:var(--text-muted);font-weight:400;">'+c.nameEN+'</span>':'')+'</div>'+
+
           '<div class="org-header-tags">'+
             typeBadges+natureBadges+
             (c.district?'<span class="badge badge-gray">'+c.district+(c.subDistrict?' · '+c.subDistrict:'')+'</span>':'')+
@@ -1038,7 +1045,11 @@ window.addEventListener('scroll',function(){
   const clinics = pages
     .map(toClinic)
     .filter(c => c.nameCN)
-    .sort((a, b) => a.nameCN.localeCompare(b.nameCN, 'zh-Hant'));
+    .sort((a, b) => {
+      const rank = s => s === '已結業' ? 1 : 0;
+      const r = rank(a.status) - rank(b.status);
+      return r !== 0 ? r : a.nameCN.localeCompare(b.nameCN, 'zh-Hant');
+    });
 
   const lastUpdated = new Date().toLocaleDateString('zh-HK', {
     year: 'numeric', month: 'long', day: 'numeric',
