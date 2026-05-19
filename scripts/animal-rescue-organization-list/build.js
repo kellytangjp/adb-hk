@@ -32,6 +32,29 @@ function prop(page, name) {
   }
 }
 
+/* ── rich text → HTML (preserves \n as <br>, escapes HTML chars) ── */
+function propHtml(page, name) {
+  const p = page.properties[name];
+  if (!p) return '';
+  let text = '';
+  if (p.type === 'rich_text') {
+    text = p.rich_text.map(t => t.plain_text).join('');
+  } else if (p.type === 'title') {
+    text = p.title.map(t => t.plain_text).join('');
+  } else {
+    return '';
+  }
+  if (!text) return '';
+  // escape HTML special chars first
+  text = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  // convert newlines to <br>
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
 /* ── clean & split phone/whatsapp string into array ── */
 function parseNumbers(raw) {
   if (!raw) return [];
@@ -117,13 +140,14 @@ function toOrg(page) {
     hours:        prop(page, '服務時間')  || '',
     website:      prop(page, '網站')      || '',
     email:        prop(page, '電郵')      || '',
+    emails:       (prop(page, '電郵') || '').split(/[;；]/).map(s => s.trim()).filter(Boolean),
     facebook: fbUrl ? { name: urlToName(fbUrl), url: fbUrl } : null,
     instagram: igUrl ? { name: '@' + urlToName(igUrl).replace(/^@/, ''), url: igUrl } : null,
     taxDeductible:  prop(page, '可扣稅')  || false,
     charityRef:     prop(page, '慈善團體參考編號') || '',
-    donation:       prop(page, '捐助方法') || '',
-    addressZh:      prop(page, '地址')    || '',
-    addressEn:      prop(page, 'Address') || '',
+    donation:       propHtml(page, '捐助方法'),
+    addressZh:      propHtml(page, '地址'),
+    addressEn:      propHtml(page, 'Address'),
     icon,
     avatarColor,
   };
@@ -533,8 +557,15 @@ function renderOrgs(list){
       rows+='<tr><td>WhatsApp</td><td>-</td></tr>';
     }
 
-    // 電郵
-    rows+='<tr><td>電郵</td><td>'+(o.email?'<a href="mailto:'+o.email+'">'+o.email+'</a>':'-')+'</td></tr>';
+    // 電郵 – multiple emails, each hyperlinked
+    if(o.emails&&o.emails.length){
+      var emailLinks=o.emails.map(function(e){
+        return'<a href="mailto:'+e+'">'+e+'</a>';
+      }).join('<br>');
+      rows+='<tr><td>電郵</td><td>'+emailLinks+'</td></tr>';
+    }else{
+      rows+='<tr><td>電郵</td><td>-</td></tr>';
+    }
 
     // 社交媒體 – buttons only, merged into one row
     var socials='';
@@ -549,26 +580,25 @@ function renderOrgs(list){
     }
     rows+='<tr><td>慈善團體<br>參考編號</td><td>'+charityCell+'</td></tr>';
 
-    // 捐助方法 – hyperlink any phone numbers found in the text
+    // 捐助方法 – preserve line breaks, hyperlink phone numbers
     var donationCell='-';
     if(o.donation){
-      // replace HK phone patterns (8 digits, may have spaces) with tel: links
-      donationCell=o.donation.replace(/(\d[\d\s]{6,}\d)/g,function(match){
-        var d=match.replace(/\s/g,'');
-        var full=d.length<=8?'852'+d:d;
-        var display=d.length===8?d.slice(0,4)+' '+d.slice(4):match;
-        return'<a href="tel:+'+full+'">'+display+'</a>';
+      // o.donation already has <br> from propHtml; run phone regex on plain segments
+      donationCell=o.donation.replace(/(\d{4})\s*(\d{4})/g,function(match,a,b){
+        var full='852'+a+b;
+        return'<a href="tel:+'+full+'">'+a+' '+b+'</a>';
       });
     }
     rows+='<tr><td>捐助方法</td><td>'+donationCell+'</td></tr>';
 
-    // 地址 – Chinese and English on separate lines
+    // 地址 – zh then en, blank line between, preserve internal line breaks
     var addrCell='-';
     if(o.addressZh||o.addressEn){
       var parts=[];
       if(o.addressZh)parts.push(o.addressZh);
       if(o.addressEn)parts.push(o.addressEn);
-      addrCell=parts.join('<br>');
+      // separate zh and en with a visible gap
+      addrCell=parts.join('<br><br>');
     }
     rows+='<tr><td>地址</td><td>'+addrCell+'</td></tr>';
 

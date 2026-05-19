@@ -27,6 +27,7 @@ function prop(page, name) {
     case 'phone_number': return p.phone_number || null;
     case 'checkbox':     return p.checkbox;
     case 'select':       return p.select ? p.select.name : null;
+    case 'status':       return p.status ? p.status.name : null;
     case 'multi_select': return p.multi_select.map(o => o.name);
     default:             return null;
   }
@@ -815,7 +816,6 @@ function renderClinics(list){
     rows+='<tr><td>社交媒體</td><td>'+(socials?'<div class="social-btns">'+socials+'</div>':'-')+'</td></tr>';
 
     var isClosed=c.status==='已結業';
-    var closedBadge=isClosed?'<span class="badge badge-closed">已結業</span> ':'';
     return '<div class="org-card'+(isClosed?' closed':'')+'" id="card-'+i+'">'+
       '<div class="org-card-header" onclick="toggleCard('+i+')">'+
         '<div class="org-avatar '+c.avatarColor+'">'+c.icon+'</div>'+
