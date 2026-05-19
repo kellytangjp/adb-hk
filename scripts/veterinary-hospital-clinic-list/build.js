@@ -361,25 +361,105 @@ body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary)
 .float-filter-count.visible{display:inline-block;}
 
 /* FILTER DRAWER */
-.filter-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;opacity:0;transition:opacity .25s;}
+/* ── Filter panel — popover on desktop, bottom sheet on mobile ── */
+.filter-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.2);z-index:400;opacity:0;transition:opacity .25s;}
 .filter-drawer-overlay.open{display:block;opacity:1;}
-.filter-drawer{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--white);border-radius:20px 20px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.12);transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);max-height:80vh;overflow-y:auto;}
-.filter-drawer.open{transform:translateY(0);}
-.filter-drawer-handle{display:flex;justify-content:center;padding:12px 0 0;}
-.filter-drawer-handle-bar{width:36px;height:4px;background:var(--border);border-radius:2px;}
-.filter-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem .75rem;border-bottom:1px solid var(--border);}
+
+/* desktop: compact centred popover */
+.filter-drawer{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);
+  z-index:500;background:var(--white);
+  border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.18);
+  width:min(860px,92vw);max-height:82vh;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;
+}
+.filter-drawer.open{
+  opacity:1;pointer-events:all;
+  transform:translate(-50%,-50%);
+}
+.filter-drawer-handle{display:none;} /* desktop: no handle bar */
+.filter-drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 1.4rem .8rem;border-bottom:1px solid var(--border);flex-shrink:0;
+}
 .filter-drawer-title{font-size:15px;font-weight:600;color:var(--text-primary);}
-.filter-drawer-close{width:30px;height:30px;border-radius:50%;border:none;background:var(--bg-soft);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .15s;}
+.filter-drawer-close{
+  width:28px;height:28px;border-radius:50%;border:none;
+  background:var(--bg-soft);color:var(--text-secondary);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:background .15s;
+}
 .filter-drawer-close:hover{background:var(--border);}
-.filter-drawer-body{padding:1rem 1.5rem;}
-.filter-drawer-section{margin-bottom:1.25rem;}
-.filter-drawer-section:last-child{margin-bottom:.5rem;}
-.filter-drawer-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
-.filter-drawer-footer{padding:1rem 1.5rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:10px;}
-.drawer-clear-btn{flex:1;height:44px;border:1px solid var(--border);border-radius:10px;background:var(--white);font-family:var(--font);font-size:14px;color:var(--text-secondary);cursor:pointer;transition:all .15s;}
+
+/* body: 2-column grid */
+.filter-drawer-body{
+  padding:1.1rem 1.4rem;overflow-y:auto;flex:1;
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.5rem;
+}
+.filter-drawer-section{margin:0;}
+.filter-drawer-section.full-width{grid-column:1/-1;}
+.filter-drawer-label{
+  font-size:11px;font-weight:700;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.8px;
+  margin-bottom:8px;display:block;
+}
+/* chips inside drawer — horizontal wrap, compact */
+.filter-drawer-body .toggle-group{flex-direction:row;flex-wrap:wrap;gap:5px;}
+.filter-drawer-body .toggle-pill{
+  width:auto;padding:4px 10px;border-radius:20px;
+  font-size:12px;border:1px solid var(--border);
+  background:var(--white);color:var(--text-secondary);
+}
+.filter-drawer-body .toggle-pill:hover{border-color:var(--coral);color:var(--coral);background:var(--white);}
+.filter-drawer-body .toggle-pill.active{
+  background:var(--coral);border-color:var(--coral);color:white;font-weight:500;
+}
+/* hide checkbox inside drawer chips — not needed in chip style */
+.filter-drawer-body .tp-check{display:none;}
+.filter-drawer-body .tp-count{display:none;}
+
+/* sub-district in drawer */
+.filter-drawer-body #drawer-sub-district-wrap{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.filter-drawer-body .sub-group{display:none;flex-wrap:wrap;gap:5px;}
+.filter-drawer-body .sub-group .toggle-pill{font-size:11px;padding:3px 9px;}
+
+.filter-drawer-footer{
+  padding:.85rem 1.4rem;border-top:1px solid var(--border);
+  display:flex;gap:10px;flex-shrink:0;
+}
+.drawer-clear-btn{
+  height:38px;padding:0 20px;
+  border:1px solid var(--border);border-radius:8px;
+  background:var(--white);font-family:var(--font);font-size:13px;
+  color:var(--text-secondary);cursor:pointer;transition:all .15s;
+}
 .drawer-clear-btn:hover{border-color:var(--coral);color:var(--coral);}
-.drawer-apply-btn{flex:2;height:44px;border:none;border-radius:10px;background:var(--coral);font-family:var(--font);font-size:14px;font-weight:500;color:white;cursor:pointer;transition:background .15s;}
+.drawer-apply-btn{
+  flex:1;height:38px;border:none;border-radius:8px;
+  background:var(--coral);font-family:var(--font);font-size:13px;
+  font-weight:500;color:white;cursor:pointer;transition:background .15s;
+}
 .drawer-apply-btn:hover{background:var(--coral-hover);}
+
+/* mobile: revert to bottom sheet */
+@media(max-width:768px){
+  .filter-drawer{
+    top:auto;bottom:0;left:0;right:0;width:100%;
+    border-radius:20px 20px 0 0;max-height:85vh;
+    transform:translateY(100%);opacity:1;
+    transition:transform .3s cubic-bezier(.32,.72,0,1);
+  }
+  .filter-drawer.open{transform:translateY(0);}
+  .filter-drawer-handle{display:flex;justify-content:center;padding:12px 0 4px;}
+  .filter-drawer-handle-bar{width:36px;height:4px;background:var(--border);border-radius:2px;}
+  .filter-drawer-body{grid-template-columns:1fr;gap:.75rem;}
+  .filter-drawer-body .toggle-group{flex-direction:column;}
+  .filter-drawer-body .toggle-pill{width:100%;border-radius:7px;border:none;padding:6px 8px;}
+  .filter-drawer-body .tp-check{display:flex;}
+  .filter-drawer-body .tp-count{display:inline;}
+}
 
 /* RESPONSIVE */
 @media(max-width:768px){
@@ -901,36 +981,36 @@ window.addEventListener('scroll',function(){
     <button class="filter-drawer-close" onclick="closeFilterDrawer()">×</button>
   </div>
   <div class="filter-drawer-body">
-    <div class="filter-drawer-section">
-      <div class="filter-drawer-label">地區</div>
+    <div class="filter-drawer-section full-width">
+      <span class="filter-drawer-label">地區</span>
       <div class="toggle-group" id="drawer-district-toggles">
         ${districtOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleSingleDrawer('district','${esc(o)}',this)">${esc(o)}</button>`).join('')}
       </div>
-      <div id="drawer-sub-district-wrap" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px;display:none;">
-        <div class="filter-drawer-label" style="margin-bottom:8px;">分區</div>
+      <div id="drawer-sub-district-wrap" style="display:none;">
+        <div class="filter-drawer-label" style="margin-top:8px;">分區</div>
         ${drawerSubPills}
       </div>
     </div>
     <div class="filter-drawer-section">
-      <div class="filter-drawer-label">類型</div>
+      <span class="filter-drawer-label">類型</span>
       <div class="toggle-group" id="drawer-type-toggles">
         ${typeOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('type','${esc(o)}',this)">${esc(o)}</button>`).join('')}
       </div>
     </div>
     <div class="filter-drawer-section">
-      <div class="filter-drawer-label">機構性質</div>
+      <span class="filter-drawer-label">機構性質</span>
       <div class="toggle-group" id="drawer-nature-toggles">
         ${natureOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('nature','${esc(o)}',this)">${esc(o)}</button>`).join('')}
       </div>
     </div>
     <div class="filter-drawer-section">
-      <div class="filter-drawer-label">接診動物</div>
+      <span class="filter-drawer-label">接診動物</span>
       <div class="toggle-group" id="drawer-animal-toggles">
         ${animalOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('animal','${esc(o)}',this)">${esc(o)}</button>`).join('')}
       </div>
     </div>
-    <div class="filter-drawer-section">
-      <div class="filter-drawer-label">服務種類</div>
+    <div class="filter-drawer-section full-width">
+      <span class="filter-drawer-label">服務種類</span>
       <div class="toggle-group" id="drawer-service-toggles">
         ${serviceOptions.map(o => `<button class="toggle-pill" data-val="${esc(o)}" onclick="toggleMultiDrawer('service','${esc(o)}',this)">${esc(o)}</button>`).join('')}
       </div>
