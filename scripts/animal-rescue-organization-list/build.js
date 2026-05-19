@@ -105,8 +105,8 @@ function toOrg(page) {
   }
 
   return {
-    name:         prop(page, '機構/組織中文名稱') || '',   // updated
-    en:           prop(page, '機構/組織英文名稱')  || '',   // updated
+    name:         prop(page, '機構/組織中文名稱') || '',
+    en:           prop(page, '機構/組織英文名稱')  || '',
     category,
     area:         prop(page, '地區')      || '',
     desc:         prop(page, '簡介')      || '',
@@ -119,8 +119,11 @@ function toOrg(page) {
     email:        prop(page, '電郵')      || '',
     facebook: fbUrl ? { name: urlToName(fbUrl), url: fbUrl } : null,
     instagram: igUrl ? { name: '@' + urlToName(igUrl).replace(/^@/, ''), url: igUrl } : null,
-    taxDeductible:  prop(page, '可扣稅')  || false,         // updated from 非牟利機構
-    charityRef:     prop(page, '慈善團體參考編號') || '',   // new
+    taxDeductible:  prop(page, '可扣稅')  || false,
+    charityRef:     prop(page, '慈善團體參考編號') || '',
+    donation:       prop(page, '捐助方法') || '',
+    addressZh:      prop(page, '地址')    || '',
+    addressEn:      prop(page, 'Address') || '',
     icon,
     avatarColor,
   };
@@ -545,6 +548,29 @@ function renderOrgs(list){
       charityCell=o.charityRef+' <span class="badge-tax">可扣稅</span>';
     }
     rows+='<tr><td>慈善團體<br>參考編號</td><td>'+charityCell+'</td></tr>';
+
+    // 捐助方法 – hyperlink any phone numbers found in the text
+    var donationCell='-';
+    if(o.donation){
+      // replace HK phone patterns (8 digits, may have spaces) with tel: links
+      donationCell=o.donation.replace(/(\d[\d\s]{6,}\d)/g,function(match){
+        var d=match.replace(/\s/g,'');
+        var full=d.length<=8?'852'+d:d;
+        var display=d.length===8?d.slice(0,4)+' '+d.slice(4):match;
+        return'<a href="tel:+'+full+'">'+display+'</a>';
+      });
+    }
+    rows+='<tr><td>捐助方法</td><td>'+donationCell+'</td></tr>';
+
+    // 地址 – Chinese and English on separate lines
+    var addrCell='-';
+    if(o.addressZh||o.addressEn){
+      var parts=[];
+      if(o.addressZh)parts.push(o.addressZh);
+      if(o.addressEn)parts.push(o.addressEn);
+      addrCell=parts.join('<br>');
+    }
+    rows+='<tr><td>地址</td><td>'+addrCell+'</td></tr>';
 
     return '<div class="org-card" id="card-'+i+'">'+
       '<div class="org-card-header" onclick="toggleCard('+i+')">'+
