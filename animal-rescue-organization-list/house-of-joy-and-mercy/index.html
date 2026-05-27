@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿棍屋 House of Joy and Mercy | 動物拯救機構資料庫 | ADB HK</title>
+<meta name="description" content="2015年由Ivy成立，以「生有所養、病有所醫、終有所歸」為宗旨。設有元朗高埔、元朗馬鞍崗2個中心，並於深水埗設立免費善行動物診所，為浪浪、倉貓倉狗、鄉郊放養貓狗、已申請合法在公屋飼養的陪伴動物、露宿者所養的動物、主人有經濟困難或特殊情況的動物治療。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --coral:#FF6B2B;--coral-hover:#E85A1D;--coral-light:#FFF1EA;
+  --sage:#8FAF9B;--sage-deep:#6E8F7C;--sage-light:#E6F1EC;
+  --white:#FFFFFF;--bg-soft:#F7F8F7;
+  --text-primary:#2F2F2F;--text-secondary:#6B7280;--text-muted:#9CA3AF;
+  --border:#E5E7EB;--shadow:rgba(0,0,0,0.05);
+  --font:'Noto Sans TC',sans-serif;
+}
+body{font-family:var(--font);background:var(--bg-soft);color:var(--text-primary);min-height:100vh;}
+.page-header{background:var(--white);border-bottom:1px solid var(--border);padding:2.5rem 2rem 2rem;}
+.page-header-inner{max-width:800px;margin:0 auto;}
+.breadcrumb{font-size:12px;color:var(--text-muted);margin-bottom:1rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.breadcrumb a{color:var(--text-muted);text-decoration:none;}
+.breadcrumb a:hover{color:var(--coral);}
+.breadcrumb-sep{color:var(--border);}
+.page-header h1{font-size:24px;font-weight:600;color:var(--text-primary);margin-bottom:4px;letter-spacing:-.3px;}
+.page-header-en{font-size:14px;color:var(--text-muted);font-weight:300;margin-bottom:1rem;}
+.header-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:.75rem;}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;white-space:nowrap;}
+.badge-coral{background:var(--coral-light);color:var(--coral);}
+.badge-sage{background:var(--sage-light);color:var(--sage-deep);}
+.badge-gray{background:var(--bg-soft);color:var(--text-secondary);border:1px solid var(--border);}
+.main{max-width:800px;margin:2rem auto;padding:0 2rem 4rem;}
+.detail-card{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 2px 12px var(--shadow);}
+.detail-table{width:100%;border-collapse:collapse;font-size:14px;}
+.detail-table tr{border-bottom:1px solid var(--border);}
+.detail-table tr:last-child{border-bottom:none;}
+.detail-table td{padding:14px 1.5rem;vertical-align:top;line-height:1.7;}
+.detail-table td:first-child{width:110px;color:var(--text-muted);font-size:12px;white-space:nowrap;padding-top:16px;font-weight:500;}
+.detail-table td:last-child{color:var(--text-secondary);}
+.detail-table a{color:var(--coral);text-decoration:none;}
+.detail-table a:hover{text-decoration:underline;}
+.social-btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
+.social-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--white);font-family:var(--font);font-size:13px;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:all .15s;}
+.social-btn.fb{border-color:#bad3f5;color:#1877f2;}
+.social-btn.fb:hover{background:#e8f0fe;}
+.social-btn.ig{border-color:#f5c6da;color:#e1306c;}
+.social-btn.ig:hover{background:#fdf0f5;}
+.badge-tax{display:inline-block;background:#eef6ee;color:#3a7a3a;font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;margin-bottom:1.5rem;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:var(--white);font-family:var(--font);font-size:13px;color:var(--text-secondary);text-decoration:none;transition:all .15s;cursor:pointer;}
+.back-btn:hover{border-color:var(--coral);color:var(--coral);background:var(--coral-light);}
+@media(max-width:640px){
+  .page-header{padding:1.5rem 1rem 1rem;}
+  .main{padding:0 1rem 3rem;}
+  .detail-table td:first-child{width:80px;}
+  .detail-table td{padding:12px 1rem;}
+}</style>
+</head>
+<body>
+<script src="/adb-hk/nav.js"></script>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb">
+      <a href="/adb-hk/">首頁</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="/adb-hk/animal-rescue-organization-list/">動物拯救機構資料庫</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>阿棍屋 House of Joy and Mercy</span>
+    </div>
+    <h1>阿棍屋 House of Joy and Mercy</h1>
+    <div class="page-header-en">House of Joy and Mercy</div>
+    <div class="header-badges">
+      <span class="badge badge-sage">非牟利機構</span>
+      <span class="badge badge-gray">全港</span>
+<span class="badge badge-coral">動物拯救</span><span class="badge badge-coral">收容所</span><span class="badge badge-coral">領養服務</span><span class="badge badge-coral">醫療救助</span><span class="badge badge-gray">狗狗 🐕</span><span class="badge badge-gray">貓貓 🐈‍⬛</span>    </div>
+  </div>
+</div>
+<div class="main">
+  <a class="back-btn" href="/adb-hk/animal-rescue-organization-list/">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    返回列表
+  </a>
+  <div class="detail-card">
+    <table class="detail-table"><tr><td>機構簡介</td><td>2015年由Ivy成立，以「生有所養、病有所醫、終有所歸」為宗旨。設有元朗高埔、元朗馬鞍崗2個中心，並於深水埗設立免費善行動物診所，為浪浪、倉貓倉狗、鄉郊放養貓狗、已申請合法在公屋飼養的陪伴動物、露宿者所養的動物、主人有經濟困難或特殊情況的動物治療。</td></tr><tr><td>服務時間</td><td>24小時</td></tr><tr><td>網站</td><td><a href="https://housejoymercy.com" target="_blank" rel="noopener">https://housejoymercy.com</a></td></tr><tr><td>電話</td><td><a href="tel:+85294889972">9488 9972</a>；<a href="tel:+85292989969">9298 9969</a>；<a href="tel:+85221519911">2151 9911</a></td></tr><tr><td>WhatsApp</td><td><a href="https://wa.me/85297387272" target="_blank" rel="noopener">9738 7272</a>；<a href="https://wa.me/85292989969" target="_blank" rel="noopener">9298 9969</a></td></tr><tr><td>電郵</td><td><a href="mailto:housejoymercy@gmail.com">housejoymercy@gmail.com</a></td></tr><tr><td>社交媒體</td><td><div class="social-btns"><a class="social-btn fb" href="阿棍屋: https://www.facebook.com/housejoymercy/; 阿棍屋毛孩善始善終: https://www.facebook.com/profile.php?id=100069336310708; 阿棍屋善行動物診所: https://www.facebook.com/groups/582554906553429/" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Facebook</a><a class="social-btn ig" href="https://www.instagram.com/hjoyandmercy/" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</a></div></td></tr><tr><td>慈善團體<br>參考編號</td><td>91/15201</td></tr><tr><td>捐助方法</td><td>  • 捐款<br>  • 物資</td></tr><tr><td>地址</td><td>物資收集站: 元朗八鄉錦河路馬鞍崗232號<br>狗狗領養中心: 元朗錦田高埔新村（Lot No: D. D. 103)<br>貓貓領養中心: 深水埗欽州街1-9號地下<br>非牟利動物診所: 深水埗九江街 3-5號金海大廈地下B舖<br><br>Supplies Collection Station: 232 Ma On Kong, Kam Ho Road, Pat Heung, Yuen Long<br>Dog Adoption Centre: Lot No: D. D. 103, Ko Po New Village, Kam Tin, Yuen Long<br>Cat Adoption Centre: G/F, 1-9 Yen Chow Street, Sham Shui Po<br>Non-profit Animal Clinic: Shop B, G/F, Kam Hoi Building, 3-5 Kau Kong Street, Sham Shui Po</td></tr></table>
+  </div>
+  <p style="font-size:12px;color:var(--text-muted);margin-top:1.5rem;text-align:right;">資料更新：2026年5月27日</p>
+</div>
+<script src="/adb-hk/footer.js"></script>
+</body>
+</html>
