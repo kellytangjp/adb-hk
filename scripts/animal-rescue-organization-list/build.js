@@ -2,7 +2,7 @@
  * build.js
  * Fetches all pages from the Notion database and writes:
  *   animal-rescue-organization-list/index.html        (list page)
- *   tc/animal-rescue-organization-list/[slug]/index.html  (detail pages)
+ *   animal-rescue-organization-list/[slug]/index.html  (detail pages)
  *
  * Env vars required:
  *   NOTION_TOKEN          - your Notion integration secret
@@ -153,7 +153,7 @@ function toOrg(page) {
     emails:     (prop(page, '\u96fb\u90f5') || '').split(/[;;\uff1b]/).map(s => s.trim()).filter(Boolean),
     facebook:   fbUrl ? { name: urlToName(fbUrl), url: fbUrl } : null,
     instagram:  igUrl ? { name: '@' + urlToName(igUrl).replace(/^@/, ''), url: igUrl } : null,
-    taxDeductible: prop(page, '\u53ef\u624d\u7a05') || false,
+    taxDeductible: prop(page, '\u53ef\u624d\u7a05') === true,
     charityRef: prop(page, '\u6148\u5584\u5718\u9ad4\u53c3\u8003\u7de8\u865f') || '',
     donation:   propHtml(page, '\u6350\u52a9\u65b9\u6cd5'),
     addressZh:  propHtml(page, '\u5730\u5740'),
@@ -282,7 +282,7 @@ function buildDetailHTML(org, lastUpdated) {
 
   // 慈善團體參考編號 + 可扣稅
   var charityCell = org.charityRef || '-';
-  if (org.charityRef && org.taxDeductible) {
+  if (org.taxDeductible) {
     charityCell = esc(org.charityRef) + ' <span class="badge-tax">\u53ef\u624d\u7a05</span>';
   }
   rows += '<tr><td>\u6148\u5584\u5718\u9ad4<br>\u53c3\u8003\u7de8\u865f</td><td>' + charityCell + '</td></tr>';
@@ -621,10 +621,10 @@ function buildHTML(orgs, lastUpdated, schema) {
   lines.push('    if(o.whatsapps&&o.whatsapps.length){var waLinks=o.whatsapps.map(function(w){var d=w.replace(/\\D/g,\'\');var full=d.length<=8?\'852\'+d:d;var display=d.length===8?d.slice(0,4)+\' \'+d.slice(4):w;return\'<a href="https://wa.me/\'+full+\'" target="_blank" rel="noopener">\'+display+\'</a>\';}).join(\'\uff1b\');rows+=\'<tr><td>WhatsApp</td><td>\'+waLinks+\'</td></tr>\';}else{rows+=\'<tr><td>WhatsApp</td><td>-</td></tr>\';}');
   lines.push('    if(o.emails&&o.emails.length){var emailLinks=o.emails.map(function(e){return\'<a href="mailto:\'+e+\'">\'+e+\'</a>\';}).join(\'<br>\');rows+=\'<tr><td>\u96fb\u90f5</td><td>\'+emailLinks+\'</td></tr>\';}else{rows+=\'<tr><td>\u96fb\u90f5</td><td>-</td></tr>\';}');
   lines.push('    var socials=\'\';if(o.facebook)socials+=\'<a class="social-btn fb" href="\'+o.facebook.url+\'" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Facebook</a>\';if(o.instagram)socials+=\'<a class="social-btn ig" href="\'+o.instagram.url+\'" target="_blank" rel="noopener"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</a>\';rows+=\'<tr><td>\u793e\u4ea4\u5a92\u9ad4</td><td>\'+(socials?\'<div class="social-btns">\'+socials+\'</div>\':\'-\')+\'</td></tr>\'');
-  lines.push('    var charityCell=o.charityRef||\'-\';if(o.charityRef&&o.taxDeductible){charityCell=o.charityRef+\' <span class="badge-tax">\u53ef\u624d\u7a05</span>\';}rows+=\'<tr><td>\u6148\u5584\u5718\u9ad4<br>\u53c3\u8003\u7de8\u865f</td><td>\'+charityCell+\'</td></tr>\'');
+  lines.push('    var charityCell=o.charityRef||\'-\';if(o.taxDeductible){charityCell=o.charityRef+\' <span class="badge-tax">\u53ef\u624d\u7a05</span>\';}rows+=\'<tr><td>\u6148\u5584\u5718\u9ad4<br>\u53c3\u8003\u7de8\u865f</td><td>\'+charityCell+\'</td></tr>\'');
   lines.push('    var donationCell=\'-\';if(o.donation){donationCell=o.donation.replace(/(\\d{4})\\s*(\\d{4})/g,function(match,a,b){var full=\'852\'+a+b;return\'<a href="tel:+\'+full+\'">\'+a+\' \'+b+\'</a>\';});}rows+=\'<tr><td>\u6350\u52a9\u65b9\u6cd5</td><td>\'+donationCell+\'</td></tr>\'');
   lines.push('    var addrCell=\'-\';if(o.addressZh||o.addressEn){var parts=[];if(o.addressZh)parts.push(o.addressZh);if(o.addressEn)parts.push(o.addressEn);addrCell=parts.join(\'<br><br>\');}rows+=\'<tr><td>\u5730\u5740</td><td>\'+addrCell+\'</td></tr>\'');
-  lines.push('    var detailBtn=o.slug?\'<a class="detail-page-btn" href="/adb-hk/tc/animal-rescue-organization-list/\'+o.slug+\'/\" onclick="event.stopPropagation()">\u67e5\u770b\u8a73\u60c5 &gt;&gt;</a>\':\'\';');
+  lines.push('    var detailBtn=o.slug?\'<a class="detail-page-btn" href="/adb-hk/animal-rescue-organization-list/\'+o.slug+\'/\" onclick="event.stopPropagation()">\u67e5\u770b\u8a73\u60c5 &gt;&gt;</a>\':\'\';');
   lines.push('    return \'<div class="org-card" id="card-\'+i+\'">\'');
   lines.push('      +\'<div class="org-card-header" onclick="toggleCard(\'+i+\')">\'');
   lines.push('      +\'<div class="org-avatar \'+o.avatarColor+\'">\'+o.icon+\'</div>\'');
@@ -754,7 +754,7 @@ function buildHTML(orgs, lastUpdated, schema) {
     }
     const detailHtml = buildDetailHTML(org, lastUpdated);
     const detailPath = path.join(
-      __dirname, '..', '..', 'tc', 'animal-rescue-organization-list', org.slug, 'index.html'
+      __dirname, '..', '..', 'animal-rescue-organization-list', org.slug, 'index.html'
     );
     fs.mkdirSync(path.dirname(detailPath), { recursive: true });
     fs.writeFileSync(detailPath, detailHtml, 'utf8');
@@ -762,7 +762,7 @@ function buildHTML(orgs, lastUpdated, schema) {
   });
 
   console.log('Done! Written', orgs.length, 'orgs to list page.');
-  console.log('Written', detailCount, 'detail pages to tc/animal-rescue-organization-list/[slug]/');
+  console.log('Written', detailCount, 'detail pages to animal-rescue-organization-list/[slug]/');
   if (skippedCount > 0) {
     console.log('Skipped', skippedCount, 'orgs with no English name / slug - add \u6a5f\u69cb/\u7d44\u7e54\u82f1\u6587\u540d\u7a31 in Notion.');
   }
