@@ -33,6 +33,6 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add animal-rescue-organization-list/index.html
+          git add animal-rescue-organization-list/
           git diff --staged --quiet || git commit -m "chore: sync from Notion [$(date '+%Y-%m-%d %H:%M')]"
           git push
