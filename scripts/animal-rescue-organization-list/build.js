@@ -484,6 +484,9 @@ function buildHTML(orgs, lastUpdated, schema) {
   lines.push('.badge-tax{display:inline-block;background:#eef6ee;color:#3a7a3a;font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:middle;}');
   lines.push('.view-detail-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--coral);text-decoration:none;font-weight:500;padding:4px 0;border:none;background:none;cursor:pointer;font-family:var(--font);transition:opacity .15s;}');
   lines.push('.view-detail-btn:hover{opacity:.75;}');
+  lines.push('.detail-page-btn{display:none;align-items:center;gap:5px;padding:7px 14px;background:var(--coral);color:white;border:none;border-radius:8px;font-family:var(--font);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:background .15s;cursor:pointer;}');
+  lines.push('.org-card.expanded .detail-page-btn{display:inline-flex;}');
+  lines.push('.detail-page-btn:hover{background:var(--coral-hover);}');
   lines.push('.empty-state{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:3rem 2rem;text-align:center;}');
   lines.push('.empty-icon{font-size:40px;margin-bottom:1rem;}');
   lines.push('.empty-state h3{font-size:16px;font-weight:500;margin-bottom:6px;}');
@@ -621,8 +624,7 @@ function buildHTML(orgs, lastUpdated, schema) {
   lines.push('    var charityCell=o.charityRef||\'-\';if(o.charityRef&&o.taxDeductible){charityCell=o.charityRef+\' <span class="badge-tax">\u53ef\u624d\u7a05</span>\';}rows+=\'<tr><td>\u6148\u5584\u5718\u9ad4<br>\u53c3\u8003\u7de8\u865f</td><td>\'+charityCell+\'</td></tr>\'');
   lines.push('    var donationCell=\'-\';if(o.donation){donationCell=o.donation.replace(/(\\d{4})\\s*(\\d{4})/g,function(match,a,b){var full=\'852\'+a+b;return\'<a href="tel:+\'+full+\'">\'+a+\' \'+b+\'</a>\';});}rows+=\'<tr><td>\u6350\u52a9\u65b9\u6cd5</td><td>\'+donationCell+\'</td></tr>\'');
   lines.push('    var addrCell=\'-\';if(o.addressZh||o.addressEn){var parts=[];if(o.addressZh)parts.push(o.addressZh);if(o.addressEn)parts.push(o.addressEn);addrCell=parts.join(\'<br><br>\');}rows+=\'<tr><td>\u5730\u5740</td><td>\'+addrCell+\'</td></tr>\'');
-  // detail page link row
-  lines.push('    var detailLink=o.slug?\'<tr><td></td><td><a class="view-detail-btn" href="/adb-hk/tc/animal-rescue-organization-list/\'+o.slug+\'/"> \u67e5\u770b\u8a73\u60c5 \u203a</a></td></tr>\':\'\'');
+  lines.push('    var detailBtn=o.slug?\'<a class="detail-page-btn" href="/adb-hk/tc/animal-rescue-organization-list/\'+o.slug+\'/\" onclick="event.stopPropagation()">\u67e5\u770b\u8a73\u60c5 &gt;&gt;</a>\':\'\';');
   lines.push('    return \'<div class="org-card" id="card-\'+i+\'">\'');
   lines.push('      +\'<div class="org-card-header" onclick="toggleCard(\'+i+\')">\'');
   lines.push('      +\'<div class="org-avatar \'+o.avatarColor+\'">\'+o.icon+\'</div>\'');
@@ -632,9 +634,10 @@ function buildHTML(orgs, lastUpdated, schema) {
   lines.push('      +(typeLabel?\'<span class="badge badge-sage">\'+typeLabel+\'</span>\':\'\')+\'\'');
   lines.push('      +(o.area?\'<span class="badge badge-gray">\'+o.area+\'</span>\':\'\')+svcBadges+aniBadges');
   lines.push('      +\'</div></div>\'');
+  lines.push('      +detailBtn');
   lines.push('      +\'<svg class="card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>\'');
   lines.push('      +\'</div>\'');
-  lines.push('      +\'<div class="org-card-body"><table class="detail-table">\'+rows+detailLink+\'</table></div>\'');
+  lines.push('      +\'<div class="org-card-body"><table class="detail-table">\'+rows+\'</table></div>\'');
   lines.push('      +\'</div>\'');
   lines.push('  }).join(\'\');');
   lines.push('}');
